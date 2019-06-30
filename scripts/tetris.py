@@ -1,5 +1,5 @@
-import pygame
 import random
+import pygame
 
 pygame.font.init()
 
@@ -382,21 +382,22 @@ def main(win):
 
     pygame.display.quit()
 
-def main_menu(win):
+def main_menu(window):
+    """The main menu function for the tetris game from which the original game is started"""
     run = True
     while run:
-        win.fill((0, 0, 0))
-        draw_text_middle(win, 'Press any key to play', 60, (255, 255, 255))
+        window.fill((0, 0, 0))
+        draw_text_middle(window, 'Press any key to play', 60, (255, 255, 255))
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
             if event.type == pygame.KEYDOWN:
-                main(win)
+                main(window)
 
     pygame.display.quit()
 
 
-win = pygame.display.set_mode((s_width, s_height))
+WIN = pygame.display.set_mode((s_width, s_height))
 pygame.display.set_caption('Tetris')
-main_menu(win)
+main_menu(WIN)
