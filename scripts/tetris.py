@@ -217,7 +217,7 @@ def get_random_shape():
 
 def draw_next_shape(shape, surface):
     font = pygame.font.SysFont('comicsans', 30)
-    label = font.render('Next Piece', 1, (255,255,255))
+    label = font.render('Next Piece', 1, (255, 255, 255))
 
     # Place the preview right to the tetris grid
     start_x = top_left_x + play_width + 50
@@ -228,7 +228,12 @@ def draw_next_shape(shape, surface):
         row = list(line)
         for j, column in enumerate(row):
             if column == '0':
-                pygame.draw.rect(surface, shape.color, (start_x + j * block_size, start_y + i * block_size, block_size, block_size), 0)
+                pygame.draw.rect(surface, shape.color,
+                    (start_x + j * block_size,
+                    start_y + i * block_size,
+                    block_size,
+                    block_size),
+                    0)
 
     surface.blit(label, (start_x + 10, start_y - 30))
 
@@ -237,13 +242,17 @@ def draw_grid(surface, grid):
     """Draws the grid in the window"""
     start_x = top_left_x
     start_y = top_left_y
-    color = (128,128,128)
+    color = (128, 128, 128)
 
     #Drawing the grid with certain color
     for i in range(len(grid)):
-        pygame.draw.line(surface, color, (start_x, start_y + i * block_size), (start_x + play_width, start_y + i * block_size))
+        pygame.draw.line(surface, color, (start_x, start_y + i * block_size),
+                                            (start_x + play_width,
+                                            start_y + i * block_size))
         for j in range(len(grid[i])):
-            pygame.draw.line(surface, color, (start_x + j * block_size, start_y), (start_x + j * block_size, start_y + play_height))
+            pygame.draw.line(surface, color,
+                            (start_x + j * block_size, start_y),
+                            (start_x + j * block_size, start_y + play_height))
 
 
 def clear_rows(grid, locked):
@@ -288,7 +297,6 @@ def draw_window(surface, grid, score = 0):
     start_y = top_left_y + play_height/2 - 100
 
     surface.blit(label, (start_x + 10, start_y + 170))
-
 
     for i in range(len(grid)):
         for j in range(len(grid[i])):
@@ -384,17 +392,13 @@ def main(win):
             change_pieces = False
             score += clear_rows(grid, locked_positions) * 10
 
-
         draw_window(win, grid, score)
         draw_next_shape(next_piece, win)
         pygame.display.update()
 
-
-
         if check_lost(locked_positions):
             lost_procedure(win, score)
             run = False
-
 
     pygame.display.quit()
 
