@@ -119,7 +119,14 @@ T = [['.....',
       '.....']]
 
 shapes = [S, Z, I, O, J, L, T]
-shape_colors = [(0, 255, 0), (255, 0, 0), (0, 255, 255), (255, 255, 0), (255, 165, 0), (0, 0, 255), (128, 0, 128)]
+shape_colors = [
+    (0, 255, 0),
+    (255, 0, 0),
+    (0, 255, 255),
+    (255, 255, 0),
+    (255, 165, 0),
+    (0, 0, 255),
+    (128, 0, 128)]
 # index 0 - 6 represent shape
 
 # Call this class a lot of times
@@ -149,8 +156,8 @@ def convert_shape_format(shape):
 
     return positions
 
-def create_grid(locked_pos = {}):
-    grid = [[(0,0,0) for _i in range(10)] for _i in range(20)]
+def create_grid(locked_pos={}):
+    grid = [[(0, 0, 0) for _i in range(10)] for _i in range(20)]
     # What if there are already blocks. Draw them
     # Check locked position
 
@@ -164,7 +171,7 @@ def create_grid(locked_pos = {}):
 
 def valid_space(shape, grid):
     """Check if the shape is within the windows playing borders"""
-    accepted_pos = [[(j, i) for j in range(10) if grid[i][j] == (0,0,0)] for i in range(20)]
+    accepted_pos = [[(j, i) for j in range(10) if grid[i][j] == (0, 0, 0)] for i in range(20)]
     accepted_pos = [j for sub in accepted_pos for j in sub]
 
     formated_shape = convert_shape_format(shape)
@@ -195,10 +202,12 @@ def lost_procedure(window, score):
 
 
 def draw_text_middle(surface, text, size, color):
-    font = pygame.font.SysFont('comicsans', size, bold = True)
+    font = pygame.font.SysFont('comicsans', size, bold=True)
     label = font.render(text, 1, color)
 
-    surface.blit(label, (top_left_x + play_width / 2 - (label.get_width() / 2), top_left_y + play_height / 2 - label.get_height()))
+    surface.blit(label, (
+        top_left_x + play_width / 2 - (label.get_width() / 2),
+        top_left_y + play_height / 2 - label.get_height()))
 
 
 def get_random_shape():
