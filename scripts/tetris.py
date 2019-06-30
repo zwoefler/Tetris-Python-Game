@@ -229,11 +229,11 @@ def draw_next_shape(shape, surface):
         for j, column in enumerate(row):
             if column == '0':
                 pygame.draw.rect(surface, shape.color,
-                    (start_x + j * block_size,
-                    start_y + i * block_size,
-                    block_size,
-                    block_size),
-                    0)
+                                    (start_x + j * block_size,
+                                    start_y + i * block_size,
+                                    block_size,
+                                    block_size),
+                                    0)
 
     surface.blit(label, (start_x + 10, start_y - 30))
 
