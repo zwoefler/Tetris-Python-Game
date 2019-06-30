@@ -134,7 +134,7 @@ class Piece(object):
 
 
 def convert_shape_format(shape):
-    """Converts the shape in the above shape lists to compute rreadable format"""
+    """Converts the shape in the above shape lists into computer readable format"""
     positions = []
     s_format = shape.shape[shape.rotation % len(shape.shape)]
 
@@ -184,6 +184,14 @@ def check_lost(positions):
             return True
 
     return False
+
+
+def lost_procedure(window, score):
+    """This function does a certain procedure after you lost the game"""
+    draw_text_middle(window, "You lost the game", 80, (0, 255, 255))
+    pygame.display.update()
+    pygame.time.delay(1500)
+    update_score(score)
 
 
 def draw_text_middle(surface, text, size, color):
@@ -295,6 +303,7 @@ def update_score(newscore):
 
 
 def main(win):
+    """The main function which runs the actuall game"""
     locked_positions = {}
     grid = create_grid(locked_positions)
 
@@ -352,8 +361,8 @@ def main(win):
 
         shape_pos = convert_shape_format(current_piece)
 
-        for i in range(len(shape_pos)):
-            x, y = shape_pos[i]
+        for i_tuple in shape_pos:
+            x, y = i_tuple
             if y > -1:
                 grid[y][x] = current_piece.color
 
@@ -374,11 +383,9 @@ def main(win):
 
 
         if check_lost(locked_positions):
-            draw_text_middle(win, "You lost the game", 80, (0, 255, 255))
-            pygame.display.update()
-            pygame.time.delay(1500)
+            lost_procedure(win, score)
             run = False
-            update_score(score)
+
 
     pygame.display.quit()
 
