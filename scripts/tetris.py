@@ -206,8 +206,8 @@ def draw_text_middle(surface, text, size, color):
     label = font.render(text, 1, color)
 
     surface.blit(label, (
-                    top_left_x + play_width / 2 - (label.get_width() / 2),
-                    top_left_y + play_height / 2 - label.get_height()))
+        top_left_x + play_width / 2 - (label.get_width() / 2),
+        top_left_y + play_height / 2 - label.get_height()))
 
 
 def get_random_shape():
