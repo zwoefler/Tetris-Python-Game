@@ -2,6 +2,9 @@
 import random
 import pygame
 
+# Disable all the no-member violations in this function
+# pylint: disable=no-member
+
 pygame.font.init()
 
 # Global variables
@@ -256,7 +259,6 @@ def main():
     clock = pygame.time.Clock()
     fall_time = 0
     fall_speed = 0.99
-    score = 0
 
     while run:
         grid = create_grid(locked_positions)
@@ -292,9 +294,7 @@ def main():
             if event.type == pygame.KEYDOWN:
                 #Key press left - move piece to the left
                 if event.key == pygame.K_LEFT:
-                    print("")
                     current_piece["x_coordinate"] -= 1
-                    ("event.key", event.key)
                     if not valid_space(current_piece, grid):
                         current_piece["x_coordinate"] += 1
                 #Key press right - move piece to the right
@@ -332,7 +332,6 @@ def main():
             next_piece = get_random_piece()
             change_piece = False
 #######################################################
-
 
 
 #######################################################
