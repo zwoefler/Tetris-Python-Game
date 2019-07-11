@@ -146,11 +146,11 @@ def create_grid(locked_positions={}):
     """Creates the 20 x 10 playing grid"""
     grid = [[BLACK for x in range(COLUMNS)] for x in range(ROWS)]
 
-    for i, row in enumerate(grid):
-        for j, column in enumerate(grid[i]):
+    for i, _row in enumerate(grid):
+        for j, _column in enumerate(grid[i]):
             if (j, i) in locked_positions:
-                c = locked_positions[(j,i)]
-                grid[i][j] = c
+                key = locked_positions[(j, i)]
+                grid[i][j] = key
     return grid
 
 
@@ -163,7 +163,8 @@ def draw_grid(surface, row, column):
                          (start_x + PLAY_WIDTH, start_y + i * 30)) #horizontal lines
         for j in range(column):
             pygame.draw.line(surface, (128, 128, 128),
-                             (start_x + j * 30, start_y), (start_x + j * 30, start_y + PLAY_HEIGHT)) #vertical lines
+                             (start_x + j * 30, start_y),
+                             (start_x + j * 30, start_y + PLAY_HEIGHT)) #vertical lines
 
 
 def draw_window(surface):
@@ -174,9 +175,10 @@ def draw_window(surface):
     label = font.render('Tetris', 1, WHITE)
 
     surface.blit(label, (TOP_LEFT_X+ PLAY_WIDTH / 2 - (label.get_width() / 2), 30))
-    for i in range(len(grid)):
-        for j in range(len(grid[i])):
-            pygame.draw.rect(surface, grid[i][j], (TOP_LEFT_X + j * 30, TOP_LEFT_Y + i * 30, 30, 30), 0)
+    for i, _ in enumerate(grid):
+        for j, _ in enumerate(grid[i]):
+            pygame.draw.rect(surface, grid[i][j],
+                             (TOP_LEFT_X + j * 30, TOP_LEFT_Y + i * 30, 30, 30), 0)
 
     #draw grid and border
     draw_grid(surface, ROWS, COLUMNS)
@@ -204,7 +206,8 @@ def transform_shape_into_grid_positions(shape):
 
 
 def draw_text_middle(text, size, color, surface):
-    """Prints a given text in bold in the middle of the screen, with the given attriburtes color and size"""
+    """Prints a given text in bold in the middle of the screen,
+    with the given attriburtes color and size"""
     font = pygame.font.SysFont('Arial', size, bold=True)
     label = font.render(text, 1, color)
     surface.blit(label, label.get_rect())
@@ -216,18 +219,20 @@ def get_random_piece():
     shape_color = SHAPE_COLORS[SHAPES.index(piece_shape)]
 
     piece = {
-    "x_coordinate": 5,
-    "y_coordinate": 0,
-    "shape": piece_shape,
-    "color": shape_color,
-    "rotation": 0
+        "x_coordinate": 5,
+        "y_coordinate": 0,
+        "shape": piece_shape,
+        "color": shape_color,
+        "rotation": 0
     }
 
     return piece
 
 
 def valid_space(piece, grid):
-    accepted_positions = [[(j, i) for j in range(COLUMNS) if grid[i][j] == BLACK] for i in range(ROWS)]
+    """Checks if the piece is within its boundaries and doesn't hit another piece"""
+    accepted_positions = [
+        [(j, i) for j in range(COLUMNS) if grid[i][j] == BLACK] for i in range(ROWS)]
     accepted_positions = [j for sub in accepted_positions for j in sub]
     formatted = transform_shape_into_grid_positions(piece)
 
@@ -242,6 +247,7 @@ def valid_space(piece, grid):
 
 
 def check_lost():
+    """Checks weather the player stacked too high"""
     pass
 
 
@@ -326,8 +332,8 @@ def main():
         # Draw next piece once the piece hits the ground or other pieces
         if change_piece:
             for pos in shape_position:
-                p = (pos[0], pos[1])
-                locked_positions[p] = current_piece["color"]
+                locked_pos = (pos[0], pos[1])
+                locked_positions[locked_pos] = current_piece["color"]
             current_piece = next_piece
             next_piece = get_random_piece()
             change_piece = False
