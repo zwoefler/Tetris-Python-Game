@@ -125,7 +125,6 @@ T = [['.....',
       '.00..',
       '..0..',
       '.....']]
-
 SHAPES = [S, Z, I, O, J, L, T]
 SHAPE_COLORS = [
     (0, 255, 0),
@@ -141,7 +140,7 @@ BORDER_COLOR = (0, 120, 120)
 # index 0 - 6 represent shape
 
 
-def create_grid(locked_positions={}):
+def create_grid(locked_positions):
     """Creates the 20 x 10 playing grid"""
     grid = [[BLACK for x in range(COLUMNS)] for x in range(ROWS)]
 
