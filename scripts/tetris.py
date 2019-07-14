@@ -14,12 +14,11 @@ PLAY_WIDTH = 300            # 300 // 10 = 30 width per block
 PLAY_HEIGHT = 600           # 600 // 20 = 30 height per block
 BLOCK_SIZE = 30
 
-
 # Global Grid Variables
 ROWS = 20
 COLUMNS = 10
 
-TOP_LEFT_X = (S_WIDTH - PLAY_WIDTH) //2 #250
+TOP_LEFT_X = (S_WIDTH - PLAY_WIDTH) // 2 #250
 TOP_LEFT_Y = S_HEIGHT - PLAY_HEIGHT     #100
 
 
@@ -225,7 +224,6 @@ def get_random_piece():
         "color": shape_color,
         "rotation": 0
     }
-
     return piece
 
 
@@ -233,22 +231,57 @@ def valid_space(piece, grid):
     """Checks if the piece is within its boundaries and doesn't hit another piece"""
     accepted_positions = [
         [(j, i) for j in range(COLUMNS) if grid[i][j] == BLACK] for i in range(ROWS)]
-    accepted_positions = [j for sub in accepted_positions for j in sub]
-    formatted = transform_shape_into_grid_positions(piece)
+    accepted_positions = [
+        number for accepted_tuple in accepted_positions for number in accepted_tuple]
+    formatted_shape = transform_shape_into_grid_positions(piece)
 
-    for pos in formatted:
-        print("pos in formatted", pos)
+    for pos in formatted_shape:
         if pos not in accepted_positions:
-            print("pos not in acc_pos", pos)
             if pos[1] > -1:
                 return False
 
     return True
 
 
-def check_lost():
+def has_lost(locked_positions):
     """Checks weather the player stacked too high"""
-    pass
+    for pos in locked_positions:
+        if pos[1] < 1:
+            return True
+    return False
+
+
+def keyboard_interaction_while_playing(current_piece, grid):
+    # Keyboard interaction with the keyboard
+    for event in pygame.event.get():
+        if event.type == pygame.quit:
+            run = False
+            return run
+
+        # Piece Actions
+        if event.type == pygame.KEYDOWN:
+            #Key press left - move piece to the left
+            if event.key == pygame.K_LEFT:
+                current_piece["x_coordinate"] -= 1
+                if not valid_space(current_piece, grid):
+                    current_piece["x_coordinate"] += 1
+            #Key press right - move piece to the right
+            elif event.key == pygame.K_RIGHT:
+                current_piece["x_coordinate"] += 1
+                if not valid_space(current_piece, grid):
+                    current_piece["x_coordinate"] -= 1
+            # Key press up - rotate piece clockwise
+            elif event.key == pygame.K_UP:
+                current_piece["rotation"] -= 1
+                if not valid_space(current_piece, grid):
+                    current_piece["rotation"] += 1
+
+            # Key press down - move peace down
+            if event.key == pygame.K_DOWN:
+                while valid_space(current_piece, grid):
+                    current_piece["y_coordinate"] += 1
+                current_piece["y_coordinate"] -= 1
+    return True
 
 
 def main():
@@ -271,8 +304,6 @@ def main():
         fall_time += clock.get_rawtime()
         clock.tick()
 
-
-#######################################################
         # Falling piece code
         if fall_speed > 0.15:
             fall_speed -= 0.005
@@ -285,50 +316,20 @@ def main():
             if not valid_space(current_piece, grid) and current_piece["y_coordinate"] > 0:
                 current_piece["y_coordinate"] -= 1
                 change_piece = True
-#######################################################
 
-
-#######################################################
-        # Keyboard interaction with the keyboard
-        for event in pygame.event.get():
-            if event.type == pygame.quit:
-                run = False
-                pygame.display.quit()
-                quit()
-
-            # Piece Actions
-            if event.type == pygame.KEYDOWN:
-                #Key press left - move piece to the left
-                if event.key == pygame.K_LEFT:
-                    current_piece["x_coordinate"] -= 1
-                    if not valid_space(current_piece, grid):
-                        current_piece["x_coordinate"] += 1
-                #Key press right - move piece to the right
-                if event.key == pygame.K_RIGHT:
-                    current_piece["x_coordinate"] += 1
-                    if not valid_space(current_piece, grid):
-                        current_piece["x_coordinate"] -= 1
-                # Key press down - move peace down
-                if event.key == pygame.K_DOWN:
-                    current_piece["y_coordinate"] += 1
-                    if not valid_space(current_piece, grid):
-                        current_piece["y_coordinate"] -= 1
-                # Key press up - rotate piece clockwise
-                if event.key == pygame.K_UP:
-                    current_piece["rotation"] += 1
-#######################################################
+        #Navigation with the keyboard
+        if not keyboard_interaction_while_playing(current_piece, grid):
+            pygame.display.quit()
+            quit()
 
         shape_position = transform_shape_into_grid_positions(current_piece)
 
-#######################################################
-        # Draw the falling piece
+        # Draw the falling piece to the canvas
         for pos in shape_position:
-            x_coor, y_coor = pos
-            if y_coor > -1:
-                grid[y_coor][x_coor] = current_piece["color"]
-#######################################################
+            if pos[1] > -1:
+                grid[pos[1]][pos[0]] = current_piece["color"]
 
-#######################################################
+
         # Draw next piece once the piece hits the ground or other pieces
         if change_piece:
             for pos in shape_position:
@@ -337,18 +338,22 @@ def main():
             current_piece = next_piece
             next_piece = get_random_piece()
             change_piece = False
-#######################################################
-
-
-#######################################################
 
         # Check for cleared rows
+
         # Check if user lost, stacked too high
-        check_lost()
+        if has_lost(locked_positions):
+            run = False
 
         # Draw the window
         draw_window(WINDOW)
         pygame.display.update()
+
+    # Once the loop is left, show the message and wait 2 seconds
+    # until jumping back to the main menu
+    draw_text_middle("You lost the game", 20, WHITE, WINDOW)
+    pygame.display.update()
+    pygame.time.delay(2000)
 
 
 def main_menu():
