@@ -142,14 +142,14 @@ BORDER_COLOR = (0, 120, 120)
 
 def create_grid(locked_positions):
     """Creates the 20 x 10 playing GRID"""
-    GRID = [[BLACK for x in range(COLUMNS)] for x in range(ROWS)]
+    grid = [[BLACK for x in range(COLUMNS)] for x in range(ROWS)]
 
-    for i, _row in enumerate(GRID):
-        for j, _column in enumerate(GRID[i]):
+    for i, _row in enumerate(grid):
+        for j, _column in enumerate(grid[i]):
             if (j, i) in locked_positions:
                 key = locked_positions[(j, i)]
-                GRID[i][j] = key
-    return GRID
+                grid[i][j] = key
+    return grid
 
 
 def draw_grid(surface, row, column):
@@ -226,10 +226,10 @@ def get_random_piece():
     return piece
 
 
-def valid_space(piece, GRID):
+def valid_space(piece, grid):
     """Checks if the piece is within its boundaries and doesn't hit another piece"""
     accepted_positions = [
-        [(j, i) for j in range(COLUMNS) if GRID[i][j] == BLACK] for i in range(ROWS)]
+        [(j, i) for j in range(COLUMNS) if grid[i][j] == BLACK] for i in range(ROWS)]
     accepted_positions = [
         number for accepted_tuple in accepted_positions for number in accepted_tuple]
     formatted_shape = transform_shape_into_grid_positions(piece)
@@ -250,7 +250,7 @@ def has_lost(locked_positions):
     return False
 
 
-def keyboard_interaction_while_playing(current_piece, GRID):
+def keyboard_interaction_while_playing(current_piece, grid):
     # Keyboard interaction with the keyboard
     for event in pygame.event.get():
         if event.type == pygame.quit:
@@ -262,22 +262,22 @@ def keyboard_interaction_while_playing(current_piece, GRID):
             #Key press left - move piece to the left
             if event.key == pygame.K_LEFT:
                 current_piece["x_coordinate"] -= 1
-                if not valid_space(current_piece, GRID):
+                if not valid_space(current_piece, grid):
                     current_piece["x_coordinate"] += 1
             #Key press right - move piece to the right
             elif event.key == pygame.K_RIGHT:
                 current_piece["x_coordinate"] += 1
-                if not valid_space(current_piece, GRID):
+                if not valid_space(current_piece, grid):
                     current_piece["x_coordinate"] -= 1
             # Key press up - rotate piece clockwise
             elif event.key == pygame.K_UP:
                 current_piece["rotation"] -= 1
-                if not valid_space(current_piece, GRID):
+                if not valid_space(current_piece, grid):
                     current_piece["rotation"] += 1
 
             # Key press down - move peace down
             if event.key == pygame.K_DOWN:
-                while valid_space(current_piece, GRID):
+                while valid_space(current_piece, grid):
                     current_piece["y_coordinate"] += 1
                 current_piece["y_coordinate"] -= 1
     return True
