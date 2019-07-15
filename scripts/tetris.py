@@ -14,7 +14,7 @@ PLAY_WIDTH = 300            # 300 // 10 = 30 width per block
 PLAY_HEIGHT = 600           # 600 // 20 = 30 height per block
 BLOCK_SIZE = 30
 
-# Global Grid Variables
+# Global GRID Variables
 ROWS = 20
 COLUMNS = 10
 
@@ -141,19 +141,19 @@ BORDER_COLOR = (0, 120, 120)
 
 
 def create_grid(locked_positions):
-    """Creates the 20 x 10 playing grid"""
-    grid = [[BLACK for x in range(COLUMNS)] for x in range(ROWS)]
+    """Creates the 20 x 10 playing GRID"""
+    GRID = [[BLACK for x in range(COLUMNS)] for x in range(ROWS)]
 
-    for i, _row in enumerate(grid):
-        for j, _column in enumerate(grid[i]):
+    for i, _row in enumerate(GRID):
+        for j, _column in enumerate(GRID[i]):
             if (j, i) in locked_positions:
                 key = locked_positions[(j, i)]
-                grid[i][j] = key
-    return grid
+                GRID[i][j] = key
+    return GRID
 
 
 def draw_grid(surface, row, column):
-    """Draws the grid on to the surface"""
+    """Draws the GRID on to the surface"""
     start_x = TOP_LEFT_X
     start_y = TOP_LEFT_Y
     for i in range(row):
@@ -173,18 +173,18 @@ def draw_window(surface):
     label = font.render('Tetris', 1, WHITE)
 
     surface.blit(label, (TOP_LEFT_X+ PLAY_WIDTH / 2 - (label.get_width() / 2), 30))
-    for i, _ in enumerate(grid):
-        for j, _ in enumerate(grid[i]):
-            pygame.draw.rect(surface, grid[i][j],
+    for i, _ in enumerate(GRID):
+        for j, _ in enumerate(GRID[i]):
+            pygame.draw.rect(surface, GRID[i][j],
                              (TOP_LEFT_X + j * 30, TOP_LEFT_Y + i * 30, 30, 30), 0)
 
-    #draw grid and border
+    #draw GRID and border
     draw_grid(surface, ROWS, COLUMNS)
     pygame.draw.rect(surface, BORDER_COLOR, (TOP_LEFT_X, TOP_LEFT_Y, PLAY_WIDTH, PLAY_HEIGHT), 5)
 
 
 def transform_shape_into_grid_positions(shape):
-    """Transforms the given shape into positions in the Playing grid"""
+    """Transforms the given shape into positions in the Playing GRID"""
     position = []
     # Gets the current shape of the piece (S, T, Z, L, etc.)
     piece_shape = shape["shape"]
@@ -226,10 +226,10 @@ def get_random_piece():
     return piece
 
 
-def valid_space(piece, grid):
+def valid_space(piece, GRID):
     """Checks if the piece is within its boundaries and doesn't hit another piece"""
     accepted_positions = [
-        [(j, i) for j in range(COLUMNS) if grid[i][j] == BLACK] for i in range(ROWS)]
+        [(j, i) for j in range(COLUMNS) if GRID[i][j] == BLACK] for i in range(ROWS)]
     accepted_positions = [
         number for accepted_tuple in accepted_positions for number in accepted_tuple]
     formatted_shape = transform_shape_into_grid_positions(piece)
@@ -250,7 +250,7 @@ def has_lost(locked_positions):
     return False
 
 
-def keyboard_interaction_while_playing(current_piece, grid):
+def keyboard_interaction_while_playing(current_piece, GRID):
     # Keyboard interaction with the keyboard
     for event in pygame.event.get():
         if event.type == pygame.quit:
@@ -262,22 +262,22 @@ def keyboard_interaction_while_playing(current_piece, grid):
             #Key press left - move piece to the left
             if event.key == pygame.K_LEFT:
                 current_piece["x_coordinate"] -= 1
-                if not valid_space(current_piece, grid):
+                if not valid_space(current_piece, GRID):
                     current_piece["x_coordinate"] += 1
             #Key press right - move piece to the right
             elif event.key == pygame.K_RIGHT:
                 current_piece["x_coordinate"] += 1
-                if not valid_space(current_piece, grid):
+                if not valid_space(current_piece, GRID):
                     current_piece["x_coordinate"] -= 1
             # Key press up - rotate piece clockwise
             elif event.key == pygame.K_UP:
                 current_piece["rotation"] -= 1
-                if not valid_space(current_piece, grid):
+                if not valid_space(current_piece, GRID):
                     current_piece["rotation"] += 1
 
             # Key press down - move peace down
             if event.key == pygame.K_DOWN:
-                while valid_space(current_piece, grid):
+                while valid_space(current_piece, GRID):
                     current_piece["y_coordinate"] += 1
                 current_piece["y_coordinate"] -= 1
     return True
@@ -285,10 +285,10 @@ def keyboard_interaction_while_playing(current_piece, grid):
 
 def main():
     """The main game function function"""
-    global grid
+    global GRID
 
     locked_positions = {}
-    grid = create_grid(locked_positions)
+    GRID = create_grid(locked_positions)
 
     change_piece = False
     run = True
@@ -299,7 +299,7 @@ def main():
     fall_speed = 0.99
 
     while run:
-        grid = create_grid(locked_positions)
+        GRID = create_grid(locked_positions)
         fall_time += clock.get_rawtime()
         clock.tick()
 
@@ -312,12 +312,12 @@ def main():
             current_piece["y_coordinate"] += 1
 
             # get new piece when in locked position or hits the ground
-            if not valid_space(current_piece, grid) and current_piece["y_coordinate"] > 0:
+            if not valid_space(current_piece, GRID) and current_piece["y_coordinate"] > 0:
                 current_piece["y_coordinate"] -= 1
                 change_piece = True
 
         #Navigation with the keyboard
-        if not keyboard_interaction_while_playing(current_piece, grid):
+        if not keyboard_interaction_while_playing(current_piece, GRID):
             pygame.display.quit()
             quit()
 
@@ -326,7 +326,7 @@ def main():
         # Draw the falling piece to the canvas
         for pos in shape_position:
             if pos[1] > -1:
-                grid[pos[1]][pos[0]] = current_piece["color"]
+                GRID[pos[1]][pos[0]] = current_piece["color"]
 
 
         # Draw next piece once the piece hits the ground or other pieces
