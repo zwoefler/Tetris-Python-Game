@@ -139,7 +139,6 @@ WHITE = (255, 255, 255)
 BORDER_COLOR = (0, 120, 120)
 # index 0 - 6 represent shape
 
-
 def create_grid(locked_positions):
     """Creates the 20 x 10 playing GRID"""
     grid = [[BLACK for x in range(COLUMNS)] for x in range(ROWS)]
@@ -165,7 +164,7 @@ def draw_grid(surface, row, column):
                              (start_x + j * 30, start_y + PLAY_HEIGHT)) #vertical lines
 
 
-def draw_window(surface):
+def draw_window(surface, grid):
     """Draws the window"""
     surface.fill(BLACK)
     # Tetris Title
@@ -173,12 +172,12 @@ def draw_window(surface):
     label = font.render('Tetris', 1, WHITE)
 
     surface.blit(label, (TOP_LEFT_X+ PLAY_WIDTH / 2 - (label.get_width() / 2), 30))
-    for i, _ in enumerate(GRID):
-        for j, _ in enumerate(GRID[i]):
-            pygame.draw.rect(surface, GRID[i][j],
+    for i, _ in enumerate(grid):
+        for j, _ in enumerate(grid[i]):
+            pygame.draw.rect(surface, grid[i][j],
                              (TOP_LEFT_X + j * 30, TOP_LEFT_Y + i * 30, 30, 30), 0)
 
-    #draw GRID and border
+    #draw grid and border
     draw_grid(surface, ROWS, COLUMNS)
     pygame.draw.rect(surface, BORDER_COLOR, (TOP_LEFT_X, TOP_LEFT_Y, PLAY_WIDTH, PLAY_HEIGHT), 5)
 
@@ -251,6 +250,7 @@ def has_lost(locked_positions):
 
 
 def keyboard_interaction_while_playing(current_piece, grid):
+    """Handlerfunction for the keyboard interaction"""
     # Keyboard interaction with the keyboard
     for event in pygame.event.get():
         if event.type == pygame.quit:
@@ -285,10 +285,9 @@ def keyboard_interaction_while_playing(current_piece, grid):
 
 def main():
     """The main game function function"""
-    global GRID
 
     locked_positions = {}
-    GRID = create_grid(locked_positions)
+    grid = create_grid(locked_positions)
 
     change_piece = False
     run = True
@@ -299,7 +298,7 @@ def main():
     fall_speed = 0.99
 
     while run:
-        GRID = create_grid(locked_positions)
+        grid = create_grid(locked_positions)
         fall_time += clock.get_rawtime()
         clock.tick()
 
@@ -312,12 +311,12 @@ def main():
             current_piece["y_coordinate"] += 1
 
             # get new piece when in locked position or hits the ground
-            if not valid_space(current_piece, GRID) and current_piece["y_coordinate"] > 0:
+            if not valid_space(current_piece, grid) and current_piece["y_coordinate"] > 0:
                 current_piece["y_coordinate"] -= 1
                 change_piece = True
 
         #Navigation with the keyboard
-        if not keyboard_interaction_while_playing(current_piece, GRID):
+        if not keyboard_interaction_while_playing(current_piece, grid):
             pygame.display.quit()
             quit()
 
@@ -326,7 +325,7 @@ def main():
         # Draw the falling piece to the canvas
         for pos in shape_position:
             if pos[1] > -1:
-                GRID[pos[1]][pos[0]] = current_piece["color"]
+                grid[pos[1]][pos[0]] = current_piece["color"]
 
 
         # Draw next piece once the piece hits the ground or other pieces
@@ -345,7 +344,7 @@ def main():
             run = False
 
         # Draw the window
-        draw_window(WINDOW)
+        draw_window(WINDOW, grid)
         pygame.display.update()
 
     # Once the loop is left, show the message and wait 2 seconds
