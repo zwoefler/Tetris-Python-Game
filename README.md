@@ -12,6 +12,7 @@ This is a python version of the famous tetris game amde for my father as a birth
     [] Show live score
 [] Preview the next piece
 [] Clear Rows once they are complete
+[] Hold the right-, left-, or uparrow to move the piece
 
 
 
