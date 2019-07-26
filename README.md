@@ -17,8 +17,8 @@ This is a python version of the famous tetris game amde for my father as a birth
 
 
 # Lessons Learned
-- Getting to experiment with *[PyGame]*(https://www.pygame.org/news)
-- **Clean Code** Using *[PyLint]*(https://www.pylint.org/) for Style Guide Checks in *[TravisCI]*(https://travis-ci.com/)
+- Getting to experiment with [PyGame](https://www.pygame.org/news)
+- **Clean Code** Using [PyLint](https://www.pylint.org/) for Style Guide Checks in [TravisCI](https://travis-ci.com/)
     - Getting knowledge of PIP8 Style Guide (Unnecessary parens, naming conventions, )
     - Avoid using global variables
 
