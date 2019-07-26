@@ -4,15 +4,15 @@
 This is a python version of the famous tetris game amde for my father as a birthday gift. We used to battle ourselves at it when I was waaaay younger. So now I want to gift him this little game that he can enjoy on every computer he uses.
 
 # Known Issues
-[] Rows are not cleared
-[] The window can't be closed with the X-Button in the top right corner
+- [] Rows are not cleared
+- [] The window can't be closed with the X-Button in the top right corner
 
 # Features to implement
-[] Implement a scoresystem
-    [] Show live score
-[] Preview the next piece
-[] Clear Rows once they are complete
-[] Hold the right-, left-, or uparrow to move the piece
+- [] Implement a scoresystem
+    - [] Show live score
+- [] Preview the next piece
+- [] Clear Rows once they are complete
+- [] Hold the right-, left-, or uparrow to move the piece
 
 
 
