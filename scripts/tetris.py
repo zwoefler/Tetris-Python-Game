@@ -182,6 +182,29 @@ def draw_window(surface, grid):
     pygame.draw.rect(surface, BORDER_COLOR, (TOP_LEFT_X, TOP_LEFT_Y, PLAY_WIDTH, PLAY_HEIGHT), 5)
 
 
+def clear_rows(grid, locked_positions):
+    """Clears the rows, moves down the remaining ones on top and counts the score up"""
+    rows_cleared = 0
+
+    for i in range(len(grid) -1, -1, -1):
+        row = grid[i]
+        if (0, 0, 0) not in row:
+            rows_cleared += 1
+            # Since the row is cleared, the position is removed from the locked positions
+            ind = i
+            for j in range(len(row)):
+                del locked_positions[(j, i)]
+
+    # Move all the rows above the cleared row down
+    if rows_cleared > 0:
+        for key in sorted(list(locked_positions), key=lambda x: x[1])[::-1]:
+            x_pos, y_pos = key
+            if y_pos < ind:
+                new_key = (x_pos, y_pos + rows_cleared)
+                locked_positions[new_key] = locked_positions.pop(key)
+
+
+
 def transform_shape_into_grid_positions(shape):
     """Transforms the given shape into positions in the Playing GRID"""
     position = []
@@ -288,7 +311,7 @@ def main():
 
     locked_positions = {}
     grid = create_grid(locked_positions)
-
+    score = 0
     change_piece = False
     run = True
     current_piece = get_random_piece()
@@ -337,15 +360,17 @@ def main():
             next_piece = get_random_piece()
             change_piece = False
 
-        # Check for cleared rows
-
-        # Check if user lost, stacked too high
-        if has_lost(locked_positions):
-            run = False
+            # Check for cleared rows
+            if clear_rows(grid, locked_positions):
+                score += 10
 
         # Draw the window
         draw_window(WINDOW, grid)
         pygame.display.update()
+
+        # Check if user lost, stacked too high
+        if has_lost(locked_positions):
+            run = False
 
     # Once the loop is left, show the message and wait 2 seconds
     # until jumping back to the main menu
