@@ -136,7 +136,9 @@ SHAPE_COLORS = [
     (190, 190, 190)]
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-BORDER_COLOR = (0, 120, 120)
+GRAY_BORDER = (191, 191, 191)
+TRANSPARENT_BLACK = (0, 0, 0, 0)
+BORDER_COLOR = GRAY_BORDER
 # index 0 - 6 represent shape
 
 def create_grid(locked_positions):
@@ -156,10 +158,10 @@ def draw_grid(surface, row, column):
     start_x = TOP_LEFT_X
     start_y = TOP_LEFT_Y
     for i in range(row):
-        pygame.draw.line(surface, (128, 128, 128), (start_x, start_y + i * 30),
+        pygame.draw.line(surface, TRANSPARENT_BLACK, (start_x, start_y + i * 30),
                          (start_x + PLAY_WIDTH, start_y + i * 30)) #horizontal lines
         for j in range(column):
-            pygame.draw.line(surface, (128, 128, 128),
+            pygame.draw.line(surface, TRANSPARENT_BLACK,
                              (start_x + j * 30, start_y),
                              (start_x + j * 30, start_y + PLAY_HEIGHT)) #vertical lines
 
