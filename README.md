@@ -3,10 +3,6 @@
 # Tetris
 This is a python version of the famous tetris game amde for my father as a birthday gift. We used to play WinTETRIS battles when I was waaaay younger. So now I want to gift him this little game that he can enjoy on every computer he uses.
 
-# Known Issues
-- [X] Rows are not cleared
-- [X] The window can't be closed with the X-Button in the top right corner
-
 # Features to implement
 - [ ] Implement a scoresystem
     - [ ] Score on each cleared row
@@ -24,7 +20,7 @@ This is a python version of the famous tetris game amde for my father as a birth
     - [x] O-Shape, lightblue
     - [x] T-Shape, gray
 
-# To Do's to make
+# To Do's
 - [ ] Remove visible grid
 - [ ] Gray Border like in [this](https://classicreload.com/sites/default/files/tetris-for-windows.png) image.
 - [ ] Gray Inforbox to the left of the palying grid
@@ -42,7 +38,9 @@ This is a python version of the famous tetris game amde for my father as a birth
     - [ ] Level 10
 - [ ] Find out how many points you get per dropoff of a piece and cleared rows per level
 
-
+# Known Issues
+- [X] Rows are not cleared
+- [X] The window can't be closed with the X-Button in the top right corner
 
 # Lessons Learned
 - Getting to experiment with [PyGame](https://www.pygame.org/news)
