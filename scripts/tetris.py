@@ -182,6 +182,27 @@ def draw_window(surface, grid):
     pygame.draw.rect(surface, BORDER_COLOR, (TOP_LEFT_X, TOP_LEFT_Y, PLAY_WIDTH, PLAY_HEIGHT), 5)
 
 
+def draw_next_shape(preview_piece, window):
+    """Draws the next shape in the given box"""
+    font = pygame.font.SysFont('comicsans', 30)
+    label = font.render('Next Shape', 1, WHITE)
+
+    start_x = TOP_LEFT_X + PLAY_WIDTH + 50
+    start_y = TOP_LEFT_Y + PLAY_HEIGHT/2 -100
+    piece = preview_piece["shape"]
+    piece_format = piece[preview_piece["rotation"] % len(piece)]
+
+    for i, line in enumerate(piece_format):
+        row = list(line)
+        for j, column in enumerate(row):
+            if column == '0':
+                pygame.draw.rect(
+                    window,
+                    preview_piece["color"],
+                    (start_x + j*30, start_y + i*30, 30, 30), 0)
+
+    window.blit(label, (start_x + 10, start_y - 30))
+
 def clear_rows(grid, locked_positions):
     """Clears the rows, moves down the remaining ones on top and counts the score up"""
     rows_cleared = 0
@@ -276,8 +297,9 @@ def keyboard_interaction_while_playing(current_piece, grid):
     """Handlerfunction for the keyboard interaction"""
     # Keyboard interaction with the keyboard
     for event in pygame.event.get():
-        if event.type == pygame.quit:
+        if event.type == pygame.QUIT:
             run = False
+            pygame.quit()
             return run
 
         # Piece Actions
@@ -366,6 +388,7 @@ def main():
 
         # Draw the window
         draw_window(WINDOW, grid)
+        draw_next_shape(next_piece, WINDOW)
         pygame.display.update()
 
         # Check if user lost, stacked too high
