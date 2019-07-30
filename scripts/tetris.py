@@ -175,13 +175,10 @@ class Piece():
         return position
 
 
-    def draw_next_shape(self, window):
+    def draw_next_shape(self, window, x_pos, y_pos):
         """Draws the next shape in the given box"""
-        font = pygame.font.SysFont('comicsans', 30)
-        label = font.render('Next Shape', 1, WHITE)
-
-        start_x = TOP_LEFT_X + PLAY_WIDTH + 50
-        start_y = TOP_LEFT_Y + PLAY_HEIGHT/2 -100
+        start_x = x_pos
+        start_y = y_pos
         piece = self.shape
         piece_format = piece[self.rotation % len(piece)]
 
@@ -192,9 +189,7 @@ class Piece():
                     pygame.draw.rect(
                         window,
                         self.color,
-                        (start_x + j*30, start_y + i*30, 30, 30), 0)
-
-        window.blit(label, (start_x + 10, start_y - 30))
+                        (start_x + j*10, start_y + i*10, 10, 10), 0)
 
 
 class Score():
@@ -259,7 +254,7 @@ def draw_window(surface, grid):
     pygame.draw.rect(surface, BORDER_COLOR, (TOP_LEFT_X, TOP_LEFT_Y, PLAY_WIDTH, PLAY_HEIGHT), 5)
 
 
-def draw_score_preview(surface, score_instance):
+def draw_score_preview(surface, score_instance, next_shape):
     """Draws the rectangle to preview the next piece, show the score and the current level"""
     # Rectangle Positions
     x_pos_rect = 0.1 * S_WIDTH
@@ -272,6 +267,7 @@ def draw_score_preview(surface, score_instance):
     score_font = DESCRIPTION_FONT.render("Score", 1, BLACK)
     level_font = DESCRIPTION_FONT.render("Level", 1, BLACK)
     lines_font = DESCRIPTION_FONT.render("Lines", 1, BLACK)
+    preview_font = DESCRIPTION_FONT.render("Next", 1, BLACK)
     current_score_font = DESCRIPTION_FONT.render(str(score_instance.score), 1, BLUE)
     current_level_font = DESCRIPTION_FONT.render(str(score_instance.level), 1, BLUE)
     current_lines_font = DESCRIPTION_FONT.render(str(score_instance.lines), 1, BLUE)
@@ -294,6 +290,14 @@ def draw_score_preview(surface, score_instance):
     # Print "Lines" and a dummy for cleared lines so far
     surface.blit(lines_font, (x_pos_rect * 1.05, y_pos_rect * 1.45))
     surface.blit(current_lines_font, (x_pos_rect * 1.15, y_pos_rect * 1.55))
+
+    # Print "Next" as indication for the next comming piece
+    f_width, _f_height = DESCRIPTION_FONT.size("Next")
+    surface.blit(preview_font, (x_pos_rect + f_width, y_pos_rect * 1.65))
+    # Aligning the preview shape beneeth the "Next" text
+    next_shape.draw_next_shape(WINDOW, x_pos_rect + f_width / 1.5, y_pos_rect * 1.75)
+
+
 
 
 def clear_rows(grid, locked_positions):
@@ -453,8 +457,7 @@ def main():
 
          # Draw the window
         draw_window(WINDOW, grid)
-        next_piece.draw_next_shape(WINDOW)
-        draw_score_preview(WINDOW, game_score)
+        draw_score_preview(WINDOW, game_score, next_piece)
         pygame.display.update()
 
         # Check if user lost, stacked too high
