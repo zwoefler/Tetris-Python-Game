@@ -197,6 +197,25 @@ class Piece():
         window.blit(label, (start_x + 10, start_y - 30))
 
 
+class Score():
+    """This class holds the score for the game and its functions"""
+    def __init__(self):
+        """The standard values at the start of the game"""
+        self.level = 1
+        self.lines = 0
+        self.score = 0
+
+
+    def increase_score_for_cleared_lines(self, cleared_rows):
+        """Increases the score with the formula 100*2^(cleared_rows-1)"""
+        self.score += 100*(2**(cleared_rows - 1))
+
+
+    def lines_cleared_count(self, lines_cleared):
+        """Increases the amount of lines cleard in the Score object"""
+        self.lines += lines_cleared
+
+
 def create_grid(locked_positions):
     """Creates the 20 x 10 playing GRID"""
     grid = [[BLACK for x in range(COLUMNS)] for x in range(ROWS)]
@@ -240,7 +259,7 @@ def draw_window(surface, grid):
     pygame.draw.rect(surface, BORDER_COLOR, (TOP_LEFT_X, TOP_LEFT_Y, PLAY_WIDTH, PLAY_HEIGHT), 5)
 
 
-def draw_score_preview(surface, score, lines):
+def draw_score_preview(surface, score_instance):
     """Draws the rectangle to preview the next piece, show the score and the current level"""
     # Rectangle Positions
     x_pos_rect = 0.1 * S_WIDTH
@@ -250,12 +269,12 @@ def draw_score_preview(surface, score, lines):
     rect_height = rect_width * 2
 
     # Font settings
-    score_font = DESCRIPTION_FONT.render('Score', 1, BLACK)
-    # level_font = DESCRIPTION_FONT.render('Level', 1, BLACK)
-    lines_font = DESCRIPTION_FONT.render('Lines', 1, BLACK)
-    current_score_font = DESCRIPTION_FONT.render(str(score), 1, BLUE)
-    # current_level_font = DESCRIPTION_FONT.render(str(level), 1, BLUE)
-    current_lines_font = DESCRIPTION_FONT.render(str(lines), 1, BLUE)
+    score_font = DESCRIPTION_FONT.render("Score", 1, BLACK)
+    level_font = DESCRIPTION_FONT.render("Level", 1, BLACK)
+    lines_font = DESCRIPTION_FONT.render("Lines", 1, BLACK)
+    current_score_font = DESCRIPTION_FONT.render(str(score_instance.score), 1, BLUE)
+    current_level_font = DESCRIPTION_FONT.render(str(score_instance.level), 1, BLUE)
+    current_lines_font = DESCRIPTION_FONT.render(str(score_instance.lines), 1, BLUE)
 
     # Code for the Preview Rectangle
     pygame.draw.rect(
@@ -269,8 +288,8 @@ def draw_score_preview(surface, score, lines):
     surface.blit(current_score_font, (x_pos_rect * 1.15, y_pos_rect * 1.15))
 
     # Print "Level" and a dummy for the current level
-    # surface.blit(level_font, (x_pos_rect * 1.05, y_pos_rect * 1.25))
-    # surface.blit(current_level_font, (x_pos_rect * 1.15, y_pos_rect * 1.35))
+    surface.blit(level_font, (x_pos_rect * 1.05, y_pos_rect * 1.25))
+    surface.blit(current_level_font, (x_pos_rect * 1.15, y_pos_rect * 1.35))
 
     # Print "Lines" and a dummy for cleared lines so far
     surface.blit(lines_font, (x_pos_rect * 1.05, y_pos_rect * 1.45))
@@ -376,7 +395,6 @@ def main():
     """The main game function function"""
     locked_positions = {}
     grid = create_grid(locked_positions)
-    lines = 0
     change_piece = False
     run = True
     current_piece = get_random_piece()
@@ -384,7 +402,7 @@ def main():
     clock = pygame.time.Clock()
     fall_time = 0
     fall_speed = 0.99
-    score = 0
+    game_score = Score()
 
 
     while run:
@@ -430,13 +448,13 @@ def main():
             # Check for cleared rows
             rows_cleared = clear_rows(grid, locked_positions)
             if rows_cleared > 0:
-                score += 10 * rows_cleared
-                lines += rows_cleared
+                game_score.increase_score_for_cleared_lines(rows_cleared)
+                game_score.lines_cleared_count(rows_cleared)
 
          # Draw the window
         draw_window(WINDOW, grid)
         next_piece.draw_next_shape(WINDOW)
-        draw_score_preview(WINDOW, score, lines)
+        draw_score_preview(WINDOW, game_score)
         pygame.display.update()
 
         # Check if user lost, stacked too high
