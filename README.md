@@ -21,7 +21,7 @@ This is a python version of the famous tetris game amde for my father as a birth
     - [x] T-Shape, gray
 
 # To Do's
-- [ ] Remove visible grid
+- [X] Remove visible grid
 - [ ] Gray Border like in [this](https://classicreload.com/sites/default/files/tetris-for-windows.png) image.
 - [ ] Gray Inforbox to the left of the palying grid
 - [ ] Show levels, next piece and score in the gray Box to the left of the Playinggrid
