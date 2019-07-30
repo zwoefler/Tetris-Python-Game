@@ -376,7 +376,7 @@ def main():
 
     locked_positions = {}
     grid = create_grid(locked_positions)
-    level = 0
+    level = 1
     lines = 0
     change_piece = False
     run = True
