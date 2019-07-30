@@ -13,6 +13,8 @@ S_HEIGHT = 700
 PLAY_WIDTH = 300            # 300 // 10 = 30 width per block
 PLAY_HEIGHT = 600           # 600 // 20 = 30 height per block
 BLOCK_SIZE = 30
+DESCRIPTION_FONT = pygame.font.SysFont('Arial', int(BLOCK_SIZE * 0.5))
+
 
 # Global GRID Variables
 ROWS = 20
@@ -127,7 +129,7 @@ T = [['.....',
       '.....']]
 SHAPES = [S, Z, I, O, J, L, T]
 SHAPE_COLORS = [
-    (0, 0, 139),
+    (0, 0, 255),
     (0, 255, 0),
     (255, 0, 0),
     (0, 191, 255),
@@ -136,7 +138,10 @@ SHAPE_COLORS = [
     (190, 190, 190)]
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-BORDER_COLOR = (0, 120, 120)
+BLUE = (0, 0, 255)
+GRAY_BORDER = (191, 191, 191)
+TRANSPARENT_BLACK = (0, 0, 0, 0)
+BORDER_COLOR = GRAY_BORDER
 # index 0 - 6 represent shape
 
 def create_grid(locked_positions):
@@ -156,10 +161,10 @@ def draw_grid(surface, row, column):
     start_x = TOP_LEFT_X
     start_y = TOP_LEFT_Y
     for i in range(row):
-        pygame.draw.line(surface, (128, 128, 128), (start_x, start_y + i * 30),
+        pygame.draw.line(surface, TRANSPARENT_BLACK, (start_x, start_y + i * 30),
                          (start_x + PLAY_WIDTH, start_y + i * 30)) #horizontal lines
         for j in range(column):
-            pygame.draw.line(surface, (128, 128, 128),
+            pygame.draw.line(surface, TRANSPARENT_BLACK,
                              (start_x + j * 30, start_y),
                              (start_x + j * 30, start_y + PLAY_HEIGHT)) #vertical lines
 
@@ -180,6 +185,43 @@ def draw_window(surface, grid):
     #draw grid and border
     draw_grid(surface, ROWS, COLUMNS)
     pygame.draw.rect(surface, BORDER_COLOR, (TOP_LEFT_X, TOP_LEFT_Y, PLAY_WIDTH, PLAY_HEIGHT), 5)
+
+
+def draw_score_preview(surface, score, lines):
+    """Draws the rectangle to preview the next piece, show the score and the current level"""
+    # Rectangle Positions
+    x_pos_rect = 0.1 * S_WIDTH
+    y_pos_rect = 0.25 * S_HEIGHT
+    # Rectangle dimensions
+    rect_width = PLAY_WIDTH * 0.3
+    rect_height = rect_width * 2
+
+    # Font settings
+    score_font = DESCRIPTION_FONT.render('Score', 1, BLACK)
+    # level_font = DESCRIPTION_FONT.render('Level', 1, BLACK)
+    lines_font = DESCRIPTION_FONT.render('Lines', 1, BLACK)
+    current_score_font = DESCRIPTION_FONT.render(str(score), 1, BLUE)
+    # current_level_font = DESCRIPTION_FONT.render(str(level), 1, BLUE)
+    current_lines_font = DESCRIPTION_FONT.render(str(lines), 1, BLUE)
+
+    # Code for the Preview Rectangle
+    pygame.draw.rect(
+        surface,
+        GRAY_BORDER,
+        (x_pos_rect, y_pos_rect, rect_width, rect_height))
+
+
+    # Print "Score" and dummy for the actual score
+    surface.blit(score_font, (x_pos_rect * 1.05, y_pos_rect * 1.05))
+    surface.blit(current_score_font, (x_pos_rect * 1.15, y_pos_rect * 1.15))
+
+    # Print "Level" and a dummy for the current level
+    # surface.blit(level_font, (x_pos_rect * 1.05, y_pos_rect * 1.25))
+    # surface.blit(current_level_font, (x_pos_rect * 1.15, y_pos_rect * 1.35))
+
+    # Print "Lines" and a dummy for cleared lines so far
+    surface.blit(lines_font, (x_pos_rect * 1.05, y_pos_rect * 1.45))
+    surface.blit(current_lines_font, (x_pos_rect * 1.15, y_pos_rect * 1.55))
 
 
 def draw_next_shape(preview_piece, window):
@@ -224,6 +266,7 @@ def clear_rows(grid, locked_positions):
                 new_key = (x_pos, y_pos + rows_cleared)
                 locked_positions[new_key] = locked_positions.pop(key)
 
+    return rows_cleared
 
 
 def transform_shape_into_grid_positions(shape):
@@ -298,9 +341,7 @@ def keyboard_interaction_while_playing(current_piece, grid):
     # Keyboard interaction with the keyboard
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            run = False
             pygame.quit()
-            return run
 
         # Piece Actions
         if event.type == pygame.KEYDOWN:
@@ -330,10 +371,9 @@ def keyboard_interaction_while_playing(current_piece, grid):
 
 def main():
     """The main game function function"""
-
     locked_positions = {}
     grid = create_grid(locked_positions)
-    score = 0
+    lines = 0
     change_piece = False
     run = True
     current_piece = get_random_piece()
@@ -341,6 +381,8 @@ def main():
     clock = pygame.time.Clock()
     fall_time = 0
     fall_speed = 0.99
+    score = 0
+
 
     while run:
         grid = create_grid(locked_positions)
@@ -383,17 +425,21 @@ def main():
             change_piece = False
 
             # Check for cleared rows
-            if clear_rows(grid, locked_positions):
-                score += 10
+            rows_cleared = clear_rows(grid, locked_positions)
+            if rows_cleared > 0:
+                score += 10 * rows_cleared
+                lines += rows_cleared
 
-        # Draw the window
+         # Draw the window
         draw_window(WINDOW, grid)
         draw_next_shape(next_piece, WINDOW)
+        draw_score_preview(WINDOW, score, lines)
         pygame.display.update()
 
         # Check if user lost, stacked too high
         if has_lost(locked_positions):
             run = False
+
 
     # Once the loop is left, show the message and wait 2 seconds
     # until jumping back to the main menu
