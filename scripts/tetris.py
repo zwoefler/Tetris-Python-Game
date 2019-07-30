@@ -187,7 +187,7 @@ def draw_window(surface, grid):
     pygame.draw.rect(surface, BORDER_COLOR, (TOP_LEFT_X, TOP_LEFT_Y, PLAY_WIDTH, PLAY_HEIGHT), 5)
 
 
-def draw_score_preview(surface, score, level, lines):
+def draw_score_preview(surface, score, lines):
     """Draws the rectangle to preview the next piece, show the score and the current level"""
     # Rectangle Positions
     x_pos_rect = 0.1 * S_WIDTH
@@ -198,10 +198,10 @@ def draw_score_preview(surface, score, level, lines):
 
     # Font settings
     score_font = DESCRIPTION_FONT.render('Score', 1, BLACK)
-    level_font = DESCRIPTION_FONT.render('Level', 1, BLACK)
+    # level_font = DESCRIPTION_FONT.render('Level', 1, BLACK)
     lines_font = DESCRIPTION_FONT.render('Lines', 1, BLACK)
     current_score_font = DESCRIPTION_FONT.render(str(score), 1, BLUE)
-    current_level_font = DESCRIPTION_FONT.render(str(level), 1, BLUE)
+    # current_level_font = DESCRIPTION_FONT.render(str(level), 1, BLUE)
     current_lines_font = DESCRIPTION_FONT.render(str(lines), 1, BLUE)
 
     # Code for the Preview Rectangle
@@ -216,8 +216,8 @@ def draw_score_preview(surface, score, level, lines):
     surface.blit(current_score_font, (x_pos_rect * 1.15, y_pos_rect * 1.15))
 
     # Print "Level" and a dummy for the current level
-    surface.blit(level_font, (x_pos_rect * 1.05, y_pos_rect * 1.25))
-    surface.blit(current_level_font, (x_pos_rect * 1.15, y_pos_rect * 1.35))
+    # surface.blit(level_font, (x_pos_rect * 1.05, y_pos_rect * 1.25))
+    # surface.blit(current_level_font, (x_pos_rect * 1.15, y_pos_rect * 1.35))
 
     # Print "Lines" and a dummy for cleared lines so far
     surface.blit(lines_font, (x_pos_rect * 1.05, y_pos_rect * 1.45))
@@ -341,9 +341,7 @@ def keyboard_interaction_while_playing(current_piece, grid):
     # Keyboard interaction with the keyboard
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            run = False
             pygame.quit()
-            return run
 
         # Piece Actions
         if event.type == pygame.KEYDOWN:
@@ -373,10 +371,8 @@ def keyboard_interaction_while_playing(current_piece, grid):
 
 def main():
     """The main game function function"""
-
     locked_positions = {}
     grid = create_grid(locked_positions)
-    level = 1
     lines = 0
     change_piece = False
     run = True
@@ -437,7 +433,7 @@ def main():
          # Draw the window
         draw_window(WINDOW, grid)
         draw_next_shape(next_piece, WINDOW)
-        draw_score_preview(WINDOW, score, level, lines)
+        draw_score_preview(WINDOW, score, lines)
         pygame.display.update()
 
         # Check if user lost, stacked too high
