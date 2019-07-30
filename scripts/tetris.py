@@ -154,6 +154,7 @@ class Piece():
         self.color = SHAPE_COLORS[SHAPES.index(shape)]
         self.rotation = 0
 
+
     def transform_shape_into_grid_positions(self):
         """Transforms the given shape into positions in the Playing GRID"""
         position = []
@@ -172,6 +173,28 @@ class Piece():
             position[i] = (pos[0] - 2, pos[1] - 4)
 
         return position
+
+
+    def draw_next_shape(self, window):
+        """Draws the next shape in the given box"""
+        font = pygame.font.SysFont('comicsans', 30)
+        label = font.render('Next Shape', 1, WHITE)
+
+        start_x = TOP_LEFT_X + PLAY_WIDTH + 50
+        start_y = TOP_LEFT_Y + PLAY_HEIGHT/2 -100
+        piece = self.shape
+        piece_format = piece[self.rotation % len(piece)]
+
+        for i, line in enumerate(piece_format):
+            row = list(line)
+            for j, column in enumerate(row):
+                if column == '0':
+                    pygame.draw.rect(
+                        window,
+                        self.color,
+                        (start_x + j*30, start_y + i*30, 30, 30), 0)
+
+        window.blit(label, (start_x + 10, start_y - 30))
 
 
 def create_grid(locked_positions):
@@ -254,27 +277,6 @@ def draw_score_preview(surface, score, lines):
     surface.blit(current_lines_font, (x_pos_rect * 1.15, y_pos_rect * 1.55))
 
 
-def draw_next_shape(preview_piece, window):
-    """Draws the next shape in the given box"""
-    font = pygame.font.SysFont('comicsans', 30)
-    label = font.render('Next Shape', 1, WHITE)
-
-    start_x = TOP_LEFT_X + PLAY_WIDTH + 50
-    start_y = TOP_LEFT_Y + PLAY_HEIGHT/2 -100
-    piece = preview_piece.shape
-    piece_format = piece[preview_piece.rotation % len(piece)]
-
-    for i, line in enumerate(piece_format):
-        row = list(line)
-        for j, column in enumerate(row):
-            if column == '0':
-                pygame.draw.rect(
-                    window,
-                    preview_piece.color,
-                    (start_x + j*30, start_y + i*30, 30, 30), 0)
-
-    window.blit(label, (start_x + 10, start_y - 30))
-
 def clear_rows(grid, locked_positions):
     """Clears the rows, moves down the remaining ones on top and counts the score up"""
     rows_cleared = 0
@@ -297,8 +299,6 @@ def clear_rows(grid, locked_positions):
                 locked_positions[new_key] = locked_positions.pop(key)
 
     return rows_cleared
-
-
 
 
 
@@ -435,7 +435,7 @@ def main():
 
          # Draw the window
         draw_window(WINDOW, grid)
-        draw_next_shape(next_piece, WINDOW)
+        next_piece.draw_next_shape(WINDOW)
         draw_score_preview(WINDOW, score, lines)
         pygame.display.update()
 
