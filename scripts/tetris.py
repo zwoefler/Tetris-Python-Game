@@ -32,108 +32,15 @@ TOP_LEFT_Y = S_HEIGHT - PLAY_HEIGHT     #100
 
 
 # PIECE-SHAPES
+S = [[0, 1, 1], [1, 1, 0]]
+Z = [[1, 1, 0], [0, 1, 1]]
+I = [[1], [1], [1], [1]]
+O = [[1,1], [1,1]]
+J = [[0, 1], [0, 1], [1, 1]]
+L = [[1, 0], [1, 0], [1, 1]]
+T = [[0, 1, 0], [1, 1, 1]]
 
-S = [['.....',
-      '.....',
-      '..00.',
-      '.00..',
-      '.....'],
-     ['.....',
-      '..0..',
-      '..00.',
-      '...0.',
-      '.....']]
 
-Z = [['.....',
-      '.....',
-      '.00..',
-      '..00.',
-      '.....'],
-     ['.....',
-      '..0..',
-      '.00..',
-      '.0...',
-      '.....']]
-
-I = [['..0..',
-      '..0..',
-      '..0..',
-      '..0..',
-      '.....'],
-     ['.....',
-      '0000.',
-      '.....',
-      '.....',
-      '.....']]
-
-O = [['.....',
-      '.....',
-      '.00..',
-      '.00..',
-      '.....']]
-
-J = [['.....',
-      '.0...',
-      '.000.',
-      '.....',
-      '.....'],
-     ['.....',
-      '..00.',
-      '..0..',
-      '..0..',
-      '.....'],
-     ['.....',
-      '.....',
-      '.000.',
-      '...0.',
-      '.....'],
-     ['.....',
-      '..0..',
-      '..0..',
-      '.00..',
-      '.....']]
-
-L = [['.....',
-      '...0.',
-      '.000.',
-      '.....',
-      '.....'],
-     ['.....',
-      '..0..',
-      '..0..',
-      '..00.',
-      '.....'],
-     ['.....',
-      '.....',
-      '.000.',
-      '.0...',
-      '.....'],
-     ['.....',
-      '.00..',
-      '..0..',
-      '..0..',
-      '.....']]
-
-T = [['.....',
-      '..0..',
-      '.000.',
-      '.....',
-      '.....'],
-     ['.....',
-      '..0..',
-      '..00.',
-      '..0..',
-      '.....'],
-     ['.....',
-      '.....',
-      '.000.',
-      '..0..',
-      '.....'],
-     ['.....',
-      '..0..',
-      '.00..',
-      '..0..',
-      '.....']]
 SHAPES = [S, Z, I, O, J, L, T]
 SHAPE_COLORS = [
     (0, 0, 255),
@@ -160,25 +67,39 @@ class Piece():
         self.shape = shape
         self.color = SHAPE_COLORS[SHAPES.index(shape)]
         self.rotation = 0
+        self.rotation_state = self.shape
+
+
+    def rotate_piece(self):
+        """Rotates the piece clockwise once"""
+        # Doesn't rotate O-Shape
+        if self.shape == O:
+            return
+        else:
+            reversed_shape = list(reversed(self.rotation_state))
+            clockwise_rotated_piece = [list(i) for i in zip(*reversed_shape)]
+            self.rotation_state = clockwise_rotated_piece
+            return
 
 
     def transform_shape_into_grid_positions(self):
         """Transforms the given shape into positions in the Playing GRID"""
         position = []
         # Gets the current shape of the piece (S, T, Z, L, etc.)
-        piece_shape = self.shape
         # Gets the current rotation status of the given piece
-        shape_rotation = piece_shape[self.rotation % len(piece_shape)]
 
-        for i, line in enumerate(shape_rotation):
+        # piece_shape = self.shape
+        # shape_rotation = piece_shape[self.rotation % len(piece_shape)]
+
+        for i, line in enumerate(self.shape):
             row = list(line)
             for j, column in enumerate(row):
-                if column == '0':
+                if column == 1:
                     position.append((self.x_coordinate + j, self.y_coordinate + i))
 
         for i, pos in enumerate(position):
             position[i] = (pos[0] - 2, pos[1] - 4)
-
+            print(position[i])
         return position
 
 
@@ -186,20 +107,20 @@ class Piece():
         """Draws the next shape in the given box"""
         start_x = x_pos
         start_y = y_pos
-        piece = self.shape
-        piece_format = piece[self.rotation % len(piece)]
+        # piece_shape = self.shape
+        # shape_rotation = piece_shape[self.rotation % len(piece_shape)]
 
-        for i, line in enumerate(piece_format):
+        for i, line in enumerate(self.shape):
             row = list(line)
             for j, column in enumerate(row):
-                if column == '0':
+                if column == 1:
                     pygame.draw.rect(
                         window,
                         self.color,
                         (start_x + j*10, start_y + i*10, 10, 10), 0)
 
 
-class Score():
+class Variables():
     """This class holds the score for the game and its functions"""
     def __init__(self):
         """The standard values at the start of the game"""
@@ -214,8 +135,23 @@ class Score():
 
 
     def lines_cleared_count(self, lines_cleared):
-        """Increases the amount of lines cleard in the Score object"""
+        """Increases the amount of lines cleard in the Variables object"""
         self.lines += lines_cleared
+
+
+    def get_level(self):
+        """Returns the current level of the game"""
+        return self.level
+
+
+    def get_score(self):
+        """Returns the current score"""
+        return self.score
+
+
+    def get_lines(self):
+        """Returns the amount of lines cleared"""
+        return self.lines
 
 
 def create_grid(locked_positions):
@@ -406,7 +342,7 @@ def main():
     clock = pygame.time.Clock()
     fall_time = 0
     fall_speed = 0.99
-    game_score = Score()
+    game_score = Variables()
 
 
     while run:
@@ -415,7 +351,7 @@ def main():
         clock.tick()
 
         # Falling piece code
-        if fall_speed > 0.15:
+        if fall_speed > 0.5:
             fall_speed -= 0.005
 
         if fall_time/1000 >= fall_speed:
