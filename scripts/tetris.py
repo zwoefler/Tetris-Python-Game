@@ -35,7 +35,7 @@ TOP_LEFT_Y = S_HEIGHT - PLAY_HEIGHT     #100
 S = [[0, 1, 1], [1, 1, 0]]
 Z = [[1, 1, 0], [0, 1, 1]]
 I = [[1], [1], [1], [1]]
-O = [[1,1], [1,1]]
+O = [[1, 1], [1, 1]]
 J = [[0, 1], [0, 1], [1, 1]]
 L = [[1, 0], [1, 0], [1, 1]]
 T = [[0, 1, 0], [1, 1, 1]]
@@ -75,11 +75,10 @@ class Piece():
         # Doesn't rotate O-Shape
         if self.shape == O:
             return
-        else:
-            reversed_shape = list(reversed(self.rotation_state))
-            clockwise_rotated_piece = [list(i) for i in zip(*reversed_shape)]
-            self.rotation_state = clockwise_rotated_piece
-            return
+        reversed_shape = list(reversed(self.rotation_state))
+        clockwise_rotated_piece = [list(i) for i in zip(*reversed_shape)]
+        self.rotation_state = clockwise_rotated_piece
+        return
 
 
     def transform_shape_into_grid_positions(self):
@@ -91,7 +90,7 @@ class Piece():
         # piece_shape = self.shape
         # shape_rotation = piece_shape[self.rotation % len(piece_shape)]
 
-        for i, line in enumerate(self.shape):
+        for i, line in enumerate(self.rotation_state):
             row = list(line)
             for j, column in enumerate(row):
                 if column == 1:
@@ -110,7 +109,7 @@ class Piece():
         # piece_shape = self.shape
         # shape_rotation = piece_shape[self.rotation % len(piece_shape)]
 
-        for i, line in enumerate(self.shape):
+        for i, line in enumerate(self.rotation_state):
             row = list(line)
             for j, column in enumerate(row):
                 if column == 1:
@@ -319,9 +318,10 @@ def keyboard_interaction_while_playing(current_piece, grid):
                     current_piece.x_coordinate -= 1
             # Key press up - rotate piece clockwise
             elif event.key == pygame.K_UP:
-                current_piece.rotation -= 1
+                current_piece.rotation += 1
+                current_piece.rotate_piece()
                 if not valid_space(current_piece, grid):
-                    current_piece.rotation += 1
+                    current_piece.rotation -= 1
 
             # Key press down - move peace down
             if event.key == pygame.K_DOWN:
@@ -351,7 +351,7 @@ def main():
         clock.tick()
 
         # Falling piece code
-        if fall_speed > 0.5:
+        if fall_speed > 0.25:
             fall_speed -= 0.005
 
         if fall_time/1000 >= fall_speed:
