@@ -72,12 +72,18 @@ class Piece():
 
     def rotate_piece(self):
         """Rotates the piece clockwise once"""
-        # Doesn't rotate O-Shape
         if self.shape == O:
             return
-        reversed_shape = list(reversed(self.rotation_state))
-        clockwise_rotated_piece = [list(i) for i in zip(*reversed_shape)]
-        self.rotation_state = clockwise_rotated_piece
+
+        if self.shape == (S or Z):
+            reversed_shape = list(reversed(self.rotation_state))
+            counterclockwise_rotated_piece = [list(i) for i in zip(*reversed_shape)]
+            self.rotation_state = counterclockwise_rotated_piece
+        else:
+            counterclockwise_rotated_piece = [
+                list(i) for i in list(zip(*self.rotation_state))[::-1]]
+            self.rotation_state = counterclockwise_rotated_piece
+
         return
 
 
@@ -310,20 +316,19 @@ def keyboard_interaction_while_playing(current_piece, grid):
                     current_piece.x_coordinate -= 1
             # Key press up - rotate piece clockwise
             elif event.key == pygame.K_UP:
+                # if rotation is illegal, the before rotation state gets called
                 before_rotation = current_piece.rotation_state
                 current_piece.rotate_piece()
-                print("after roation: ", current_piece.rotation_state)
                 if not current_piece.valid_space(grid):
-                    print("not valid space")
                     current_piece.rotation_state = before_rotation
-                    print("after not valid: ", current_piece.rotation_state)
 
             # Key press down - move peace down
             if event.key == pygame.K_DOWN:
                 while current_piece.valid_space(grid):
                     current_piece.y_coordinate += 1
                 current_piece.y_coordinate -= 1
-    return True
+                return True
+    return False
 
 
 def main():
@@ -358,10 +363,8 @@ def main():
                 current_piece.y_coordinate -= 1
                 change_piece = True
 
-        #Navigation with the keyboard
-        if not keyboard_interaction_while_playing(current_piece, grid):
-            pygame.display.quit()
-            quit()
+        # Navigation with the keyboard
+        change_piece = keyboard_interaction_while_playing(current_piece, grid)
 
         shape_position = current_piece.transform_shape_into_grid_positions()
 
