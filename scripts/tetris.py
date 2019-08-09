@@ -327,7 +327,8 @@ def keyboard_interaction_while_playing(current_piece, grid):
                 while current_piece.valid_space(grid):
                     current_piece.y_coordinate += 1
                 current_piece.y_coordinate -= 1
-    return True
+                return True
+    return False
 
 
 def main():
@@ -362,10 +363,8 @@ def main():
                 current_piece.y_coordinate -= 1
                 change_piece = True
 
-        #Navigation with the keyboard
-        if not keyboard_interaction_while_playing(current_piece, grid):
-            pygame.display.quit()
-            quit()
+        # Navigation with the keyboard
+        change_piece = keyboard_interaction_while_playing(current_piece, grid)
 
         shape_position = current_piece.transform_shape_into_grid_positions()
 

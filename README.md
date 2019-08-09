@@ -57,7 +57,13 @@ Bonuses for clearing rows:
 
 # Known Issues
 - [X] Rows are not cleared
+Wrote a function that clears rows
+
 - [X] The window can't be closed with the X-Button in the top right corner
+Included asking for the eventtype pygame.QUIT
+
+- [X] Sometimes pieces that were dropped can still be moved for a fraction of a second
+Returns now true for `change_piece` immediatly after dropping the piece. Reduces some loading time
 
 # Lessons Learned
 - Getting to experiment with [PyGame](https://www.pygame.org/news)
