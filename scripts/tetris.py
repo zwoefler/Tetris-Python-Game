@@ -75,6 +75,9 @@ class Piece():
         if self.shape == O:
             return
 
+        if self.shape == I and self.rotation % 2 != 0:
+            self.rotation_state = I
+
         if self.shape == (S or Z):
             reversed_shape = list(reversed(self.rotation_state))
             counterclockwise_rotated_piece = [list(i) for i in zip(*reversed_shape)]
@@ -83,6 +86,8 @@ class Piece():
             counterclockwise_rotated_piece = [
                 list(i) for i in list(zip(*self.rotation_state))[::-1]]
             self.rotation_state = counterclockwise_rotated_piece
+
+        self.rotation += 1
 
         return
 
@@ -327,8 +332,6 @@ def keyboard_interaction_while_playing(current_piece, grid):
                 while current_piece.valid_space(grid):
                     current_piece.y_coordinate += 1
                 current_piece.y_coordinate -= 1
-                return True
-    return False
 
 
 def main():
@@ -364,7 +367,7 @@ def main():
                 change_piece = True
 
         # Navigation with the keyboard
-        change_piece = keyboard_interaction_while_playing(current_piece, grid)
+        keyboard_interaction_while_playing(current_piece, grid)
 
         shape_position = current_piece.transform_shape_into_grid_positions()
 

@@ -46,6 +46,7 @@ According to the [tetris.wiki](https://tetris.wiki/Tetris_(Microsoft_Entertainme
 - Dropping the piece increases the score value of the piece
 
 Bonuses for clearing rows:
+
 |Row|Points|
 |---|------|
 | 1 | 100  |
@@ -64,6 +65,9 @@ Included asking for the eventtype pygame.QUIT
 
 - [X] Sometimes pieces that were dropped can still be moved for a fraction of a second
 Returns now true for `change_piece` immediatly after dropping the piece. Reduces some loading time
+
+- [ ] The I shape should only rotate one time clock- and one time counterclockwise
+
 
 # Lessons Learned
 - Getting to experiment with [PyGame](https://www.pygame.org/news)
