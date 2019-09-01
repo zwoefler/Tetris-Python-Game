@@ -3,8 +3,11 @@
 # Tetris
 This is a python version of the famous tetris game amde for my father as a birthday gift. We used to play WinTETRIS battles when I was waaaay younger. So now I want to gift him this little game that he can enjoy on every computer he uses.
 
+
 # Features to implement
-- [X] Implement the scoringsystem of the original Tetris (MS Entertainment Pack for Windows)
+- [ ] Implement the scoringsystem of the original Tetris (MS Entertainment Pack for Windows)
+    - [X] Piecedrop gives ceratin amount of points
+    - [ ] More actions, turning and moving a piece, the less additional points
 - [X] Preview the next piece
 - [X] Clear Rows once they are complete
 - [ ] Hold the right-, left-, or uparrow to move the piece
@@ -21,7 +24,7 @@ This is a python version of the famous tetris game amde for my father as a birth
 - [X] Remove visible grid
 - [ ] Gray Border like in [this](https://classicreload.com/sites/default/files/tetris-for-windows.png) image.
 - [X] Gray Inforbox to the left of the palying grid
-- [ ] Show levels, next piece and score in the gray Box to the left of the Playinggrid
+- [X] Show levels, next piece and score in the gray Box to the left of the Playinggrid
 - [ ] Background should match the levelimages from original "WinTETRIS"
     - [ ] Level 1
     - [ ] Level 2
@@ -43,7 +46,8 @@ According to the [tetris.wiki](https://tetris.wiki/Tetris_(Microsoft_Entertainme
 - A piece has an initial score value, which decreases on:
     - Rotation or
     - horizontal moves
-- Dropping the piece increases the score value of the piece
+- Dropping the piece increases the score value of the piece, proportionaly to the
+distance it falls.
 
 Bonuses for clearing rows:
 
@@ -65,6 +69,8 @@ Included asking for the eventtype pygame.QUIT
 
 - [ ] Sometimes pieces that were dropped can still be moved for a fraction of a second
 Returns now true for `change_piece` immediatly after dropping the piece. Reduces some loading time
+
+- [ ] Occasionally after a row is cleared, the rest does not fall down
 
 - [X] The I shape should only rotate one time clock- and one time counterclockwise
 

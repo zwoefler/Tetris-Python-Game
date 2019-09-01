@@ -20,8 +20,8 @@ DESCRIPTION_FONT = pygame.font.SysFont('Arial', int(BLOCK_SIZE * 0.5))
 X_POS_RECT = 0.1 * S_WIDTH
 Y_POS_RECT = 0.25 * S_HEIGHT
 # Rectangle dimensions
-RECT_WIDTH = PLAY_WIDTH * 0.3
-RECT_HEIGHT = RECT_WIDTH * 2
+PREVIEW_RECT_WIDTH = PLAY_WIDTH * 0.3
+PREVIEW_RECT_HEIGHT = PREVIEW_RECT_WIDTH * 2
 
 # Global GRID Variables
 ROWS = 20
@@ -34,7 +34,7 @@ TOP_LEFT_Y = S_HEIGHT - PLAY_HEIGHT     #100
 # PIECE-SHAPES as matrices
 S = [[0, 1, 1], [1, 1, 0]]
 Z = [[1, 1, 0], [0, 1, 1]]
-I = [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]]
+I = [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0]]
 O = [[1, 1], [1, 1]]
 J = [[0, 1, 0], [0, 1, 0], [1, 1, 0]]
 L = [[0, 1, 0], [0, 1, 0], [0, 1, 1]]
@@ -49,11 +49,12 @@ SHAPE_COLORS = [
     (0, 191, 255),
     (255, 20, 147),
     (255, 255, 0),
-    (190, 190, 190)]
+    (120, 120, 120)]
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
 GRAY_BORDER = (191, 191, 191)
+DARKER_GRAY = (145, 145, 145)
 TRANSPARENT_BLACK = (0, 0, 0, 0)
 BORDER_COLOR = GRAY_BORDER
 # index 0 - 6 represent shape
@@ -127,8 +128,8 @@ class Piece():
         """Draws the next shape in the given box"""
         start_x = x_pos
         start_y = y_pos
-        # piece_shape = self.shape
-        # shape_rotation = piece_shape[self.rotation % len(piece_shape)]
+
+        block_size = BLOCK_SIZE * 0.4
 
         for i, line in enumerate(self.rotation_state):
             row = list(line)
@@ -137,7 +138,7 @@ class Piece():
                     pygame.draw.rect(
                         window,
                         self.color,
-                        (start_x + j*10, start_y + i*10, 10, 10), 0)
+                        (start_x + j*block_size, start_y + i*block_size, block_size, block_size), 0)
 
 
 
@@ -224,7 +225,6 @@ def draw_score_preview(surface, score_instance, next_shape):
     score_font = DESCRIPTION_FONT.render("Score", 1, BLACK)
     level_font = DESCRIPTION_FONT.render("Level", 1, BLACK)
     lines_font = DESCRIPTION_FONT.render("Lines", 1, BLACK)
-    preview_font = DESCRIPTION_FONT.render("Next", 1, BLACK)
     current_score_font = DESCRIPTION_FONT.render(str(score_instance.score), 1, BLUE)
     current_level_font = DESCRIPTION_FONT.render(str(score_instance.level), 1, BLUE)
     current_lines_font = DESCRIPTION_FONT.render(str(score_instance.lines), 1, BLUE)
@@ -233,8 +233,15 @@ def draw_score_preview(surface, score_instance, next_shape):
     pygame.draw.rect(
         surface,
         GRAY_BORDER,
-        (X_POS_RECT, Y_POS_RECT, RECT_WIDTH, RECT_HEIGHT))
+        (X_POS_RECT, Y_POS_RECT, PREVIEW_RECT_WIDTH, PREVIEW_RECT_HEIGHT))
 
+    # Border for the preview rectangle
+    pygame.draw.rect(
+        surface,
+        BLACK,
+        (X_POS_RECT, Y_POS_RECT, PREVIEW_RECT_WIDTH, PREVIEW_RECT_HEIGHT),
+        1
+    )
 
     # Print "Score" and dummy for the actual score
     surface.blit(score_font, (X_POS_RECT * 1.05, Y_POS_RECT * 1.05))
@@ -248,12 +255,76 @@ def draw_score_preview(surface, score_instance, next_shape):
     surface.blit(lines_font, (X_POS_RECT * 1.05, Y_POS_RECT * 1.45))
     surface.blit(current_lines_font, (X_POS_RECT * 1.15, Y_POS_RECT * 1.55))
 
-    # Print "Next" as indication for the next comming piece
-    f_width, _f_height = DESCRIPTION_FONT.size("Next")
-    surface.blit(preview_font, (X_POS_RECT + f_width, Y_POS_RECT * 1.65))
-    # Aligning the preview shape beneeth the "Next" text
-    next_shape.draw_next_shape(WINDOW, X_POS_RECT + f_width / 1.5, Y_POS_RECT * 1.75)
+    # Preview the next shape
+    next_shape.draw_next_shape(WINDOW,
+                            X_POS_RECT + PREVIEW_RECT_WIDTH * 0.3,
+                            Y_POS_RECT * 1.75)
 
+
+    # Corner starting positions of Preview rectangle
+    start_x_top = X_POS_RECT - 2
+    start_y_top = Y_POS_RECT - 2
+    origin_pos = [start_x_top, start_y_top]
+
+    end_y_west = start_y_top + PREVIEW_RECT_HEIGHT
+    end_x_east = start_x_top + PREVIEW_RECT_WIDTH
+
+    y_end_pos = [start_x_top, end_y_west]
+    x_end_pos = [end_x_east, start_y_top]
+    x_y_end_pos = [end_x_east, end_y_west]
+
+    # Preview north-west-border white
+    pygame.draw.lines(
+        surface,
+        WHITE,
+        False,
+        [x_end_pos, origin_pos, y_end_pos],
+        2
+    )
+
+    # Preview south-east-border darker gray
+    pygame.draw.lines(
+        surface,
+        DARKER_GRAY,
+        False,
+        [x_end_pos, x_y_end_pos, y_end_pos],
+        2
+    )
+
+    # Preview inner south-east border white
+    # minus 2 from the border of the rectangle
+    pygame.draw.lines(
+        surface,
+        WHITE,
+        False,
+        [(start_x_top + 3, end_y_west -2), (end_x_east -2, end_y_west -2), (end_x_east -2, start_y_top + 3)]
+    )
+
+    # Positions for piece preview
+    origin_prev_x = X_POS_RECT * 1.10
+    origin_prev_y = Y_POS_RECT * 1.7
+
+    end_prev_x = origin_prev_x + 70
+    end_prev_y = origin_prev_y + 50
+    origin_prev_pos = (origin_prev_x, origin_prev_y)
+
+    # Draw preview rectangle border black
+    pygame.draw.lines(
+        surface,
+        BLACK,
+        False,
+        [(origin_prev_x, origin_prev_y + 50), origin_prev_pos, (origin_prev_x + 70, origin_prev_y)],
+        1
+    )
+
+    # Draw preview rectangle border white
+    pygame.draw.lines(
+        surface,
+        WHITE,
+        False,
+        [(origin_prev_x, end_prev_y), (end_prev_x, end_prev_y), (end_prev_x, origin_prev_y)],
+        1
+    )
 
 def clear_rows(grid, locked_positions):
     """Clears the rows, moves down the remaining ones on top and counts the score up"""
