@@ -257,8 +257,8 @@ def draw_score_preview(surface, score_instance, next_shape):
 
     # Preview the next shape
     next_shape.draw_next_shape(WINDOW,
-                            X_POS_RECT + PREVIEW_RECT_WIDTH * 0.3,
-                            Y_POS_RECT * 1.75)
+                               X_POS_RECT + PREVIEW_RECT_WIDTH * 0.3,
+                               Y_POS_RECT * 1.75)
 
 
     # Corner starting positions of Preview rectangle
@@ -297,7 +297,9 @@ def draw_score_preview(surface, score_instance, next_shape):
         surface,
         WHITE,
         False,
-        [(start_x_top + 3, end_y_west -2), (end_x_east -2, end_y_west -2), (end_x_east -2, start_y_top + 3)]
+        [(start_x_top + 3, end_y_west -2),
+         (end_x_east -2, end_y_west -2),
+         (end_x_east -2, start_y_top + 3)]
     )
 
     # Positions for piece preview
