@@ -67,12 +67,12 @@ class Piece():
         self.y_coordinate = y_coordinate
         self.shape = shape
         self.color = SHAPE_COLORS[SHAPES.index(shape)]
-        self.rotation = 0
+        self.rotation = 1
         self.rotation_state = self.shape
 
 
     def rotate_piece(self):
-        """Rotates the piece clockwise once"""
+        """Rotates the piece counter-clockwise once"""
         if self.shape == O:
             return
 
