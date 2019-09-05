@@ -219,29 +219,33 @@ def draw_window(surface, grid):
     pygame.draw.rect(surface, BORDER_COLOR, (TOP_LEFT_X, TOP_LEFT_Y, PLAY_WIDTH, PLAY_HEIGHT), 5)
 
 
+class FontObject():
+    """This class holds the font settings for a certain font"""
+    def __init__(self, font, size):
+        self.font = font
+        self.font_size = size
+        self.font_object = pygame.font.SysFont(self.font, self.font_size)
+
+
+    def set_size(self, new_font_size):
+        """Sets the size for the font object"""
+        self.font_size = new_font_size
+
+    def set_font(self, new_font):
+        """Sets the font for the font object"""
+        self.font = new_font
+
+
 def draw_score_preview(surface, score_instance, next_shape):
     """Draws the rectangle to preview the next piece, show the score and the current level"""
     # Font settings
-    score_font = DESCRIPTION_FONT.render("Score", 1, BLACK)
-    level_font = DESCRIPTION_FONT.render("Level", 1, BLACK)
-    lines_font = DESCRIPTION_FONT.render("Lines", 1, BLACK)
+    description_font_object = FontObject('Arial', int(BLOCK_SIZE * 0.5)).font_object
+    score_font = description_font_object.render("Score", 1, BLACK)
+    level_font = description_font_object.render("Level", 1, BLACK)
+    lines_font = description_font_object.render("Lines", 1, BLACK)
     current_score_font = DESCRIPTION_FONT.render(str(score_instance.score), 1, BLUE)
     current_level_font = DESCRIPTION_FONT.render(str(score_instance.level), 1, BLUE)
     current_lines_font = DESCRIPTION_FONT.render(str(score_instance.lines), 1, BLUE)
-
-    # Code for the Preview Rectangle
-    pygame.draw.rect(
-        surface,
-        GRAY_BORDER,
-        (X_POS_RECT, Y_POS_RECT, PREVIEW_RECT_WIDTH, PREVIEW_RECT_HEIGHT))
-
-    # Border for the preview rectangle
-    pygame.draw.rect(
-        surface,
-        BLACK,
-        (X_POS_RECT, Y_POS_RECT, PREVIEW_RECT_WIDTH, PREVIEW_RECT_HEIGHT),
-        1
-    )
 
     # Print "Score" and dummy for the actual score
     surface.blit(score_font, (X_POS_RECT * 1.05, Y_POS_RECT * 1.05))
@@ -260,6 +264,22 @@ def draw_score_preview(surface, score_instance, next_shape):
                                X_POS_RECT + PREVIEW_RECT_WIDTH * 0.3,
                                Y_POS_RECT * 1.75)
 
+
+def draw_score_preview_frame(surface):
+    """Draws the preview frame with color and borders"""
+    # Code for the Preview Rectangle
+    pygame.draw.rect(
+        surface,
+        GRAY_BORDER,
+        (X_POS_RECT, Y_POS_RECT, PREVIEW_RECT_WIDTH, PREVIEW_RECT_HEIGHT))
+
+    # Border for the preview rectangle
+    pygame.draw.rect(
+        surface,
+        BLACK,
+        (X_POS_RECT, Y_POS_RECT, PREVIEW_RECT_WIDTH, PREVIEW_RECT_HEIGHT),
+        1
+    )
 
     # Corner starting positions of Preview rectangle
     start_x_top = X_POS_RECT - 2
@@ -420,7 +440,6 @@ def main():
     fall_speed = 0.99
     game_score = Variables()
 
-
     while run:
         grid = create_grid(locked_positions)
         fall_time += clock.get_rawtime()
@@ -467,6 +486,7 @@ def main():
 
          # Draw the window
         draw_window(WINDOW, grid)
+        draw_score_preview_frame(WINDOW)
         draw_score_preview(WINDOW, game_score, next_piece)
         pygame.display.update()
 
