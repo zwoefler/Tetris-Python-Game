@@ -510,28 +510,42 @@ def main():
     pygame.time.delay(2000)
 
 
+def switcher_function(switches, argument):
+    """A function that functions as a switch-statement in other programming languages
+    in a given list"""
+    return
+
+
+
 class MainMenu():
-    def __init__(self):
-        self.selection = 0
-        self.options = ['start', 'quit']
+    """A Class that holds some functions to make the main menu work,
+    like positioning of text"""
+
+    def start_the_game(self):
+        """Function to start the game from the main menu"""
+        main()
+        return
 
 
-    def start(self):
-        if self.options == 'start':
-            main()
+    def quit_the_game(self):
+        """Function to quit the game"""
+        pygame.quit()
+        quit()
+        return
 
 
-    def quit(self):
-        if self.options == 'quit':
-            pygame.quit()
-            quit()
-
+    def determine_action(self):
+        """Determines the action to be taken once a certain element of the options
+        has been selected"""
+        if self.options[self.selection] == 'start':
+            self.start_the_game()
+        if self.option[self.selection] == 'quit':
+            self.quit_the_game()
 
     def switch_options(self):
         """This function changes the selected elements color to white, and switches
         all remaining to black"""
         # for option in self.options:
-
         # self.option[self.selection]
 
 
@@ -539,8 +553,13 @@ class MainMenu():
         """Writes a text, the given message in the given font, size and color"""
         new_font = pygame.font.Font(text_font, text_size)
         new_text = new_font.render(message, 0, text_color)
-
         return new_text
+
+
+    def __init__(self):
+        self.selection = 0
+        self.options = ['start', 'quit']
+        # self.actions = [self.start_the_game(), self.quit_the_game()]
 
 
 
@@ -563,15 +582,21 @@ def main_menu():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP and menu.selection > 0:
+                    # When keypress up, the color changes to white, all others to black
                     menu.selection -= 1
-                    print(menu.selection)
-                    print('one up')
+                    rendered_menu_items = [menu_points.render_text(option, BLACK) for option in menu.options]
                     rendered_menu_items[menu.selection] = menu_points.render_text(menu.options[menu.selection], WHITE)
 
-                if event.key == pygame.K_DOWN and menu.selection < len(menu.options):
+                if event.key == pygame.K_DOWN and menu.selection < len(menu.options) - 1:
+                    # Same as above, but opposite
                     menu.selection += 1
-                    print('one down')
-                    print(menu.selection)
+                    rendered_menu_items = [menu_points.render_text(option, BLACK) for option in menu.options]
+                    rendered_menu_items[menu.selection] = menu_points.render_text(menu.options[menu.selection], WHITE)
+
+                if event.key == pygame.K_RETURN:
+                    menu.determine_action()
+                    # Get the current selection and apply the corresponding method
+                    # e.g. start the game, start the main function; or quit the game
 
 
         WINDOW.fill(BLUE)
