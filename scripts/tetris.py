@@ -563,16 +563,23 @@ def main_menu():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP and menu.selection > 0:
-                    menu.selection - 1
-                    rendered_menu_items[menu.selection] = menu_points.render_text(menu.options[menu.selection], WHTIE)
+                    menu.selection -= 1
+                    print(menu.selection)
+                    print('one up')
+                    rendered_menu_items[menu.selection] = menu_points.render_text(menu.options[menu.selection], WHITE)
 
                 if event.key == pygame.K_DOWN and menu.selection < len(menu.options):
-                    menu.selection + 1
+                    menu.selection += 1
+                    print('one down')
+                    print(menu.selection)
+
 
         WINDOW.fill(BLUE)
         WINDOW.blit(title_render, (
             S_WIDTH / 2 - title_render.get_rect()[2]/2,
             S_HEIGHT / 2 - title_render.get_rect()[2]/2))
+
+        # Calculating the positions for the main menu
         for op in rendered_menu_items:
             WINDOW.blit(op,
                 (S_WIDTH / 2 - op.get_rect()[2]/2,
