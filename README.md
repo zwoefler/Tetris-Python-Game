@@ -37,9 +37,11 @@ This is a python version of the famous tetris game amde for my father as a birth
     - [ ] Level 9
     - [ ] Level 10
 - [ ] Build a main menu:
-    - [ ] Select your starting-level
+    - [X] Selection, quit or start the game
+    - [ ] Advance in the menu to a section where you can select your starting-level
     - [ ] After the game is finished, drop back to the main menu
 - [X] Find out how many points you get per dropoff of a piece and cleared rows per level
+- [ ] Add some photos to the README.md, so people can see what the game looks like
 
 
 # Scoring System
