@@ -14,6 +14,7 @@ PLAY_WIDTH = 300            # 300 // 10 = 30 width per block
 PLAY_HEIGHT = 600           # 600 // 20 = 30 height per block
 BLOCK_SIZE = 30
 DESCRIPTION_FONT = pygame.font.SysFont('Arial', int(BLOCK_SIZE * 0.5))
+FPS=30
 
 # Preview Rectangle constants
 # Rectangle Positions
@@ -53,6 +54,7 @@ SHAPE_COLORS = [
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
 GRAY_BORDER = (191, 191, 191)
 DARKER_GRAY = (145, 145, 145)
 TRANSPARENT_BLACK = (0, 0, 0, 0)
@@ -231,9 +233,15 @@ class FontObject():
         """Sets the size for the font object"""
         self.font_size = new_font_size
 
+
     def set_font(self, new_font):
         """Sets the font for the font object"""
         self.font = new_font
+
+
+    def render_text(self, message, text_color):
+        """This functions renders the given message in the given color, given as a triplet"""
+        return self.font_object.render(message, 0, text_color)
 
 
 def draw_score_preview(surface, score_instance, next_shape):
@@ -443,7 +451,7 @@ def main():
     while run:
         grid = create_grid(locked_positions)
         fall_time += clock.get_rawtime()
-        clock.tick()
+        clock.tick(FPS)
 
         # Falling piece code
         if fall_speed > 0.25:
@@ -502,20 +510,79 @@ def main():
     pygame.time.delay(2000)
 
 
+class MainMenu():
+    def __init__(self):
+        self.selection = 0
+        self.options = ['start', 'quit']
+
+
+    def start(self):
+        if self.options == 'start':
+            main()
+
+
+    def quit(self):
+        if self.options == 'quit':
+            pygame.quit()
+            quit()
+
+
+    def switch_options(self):
+        """This function changes the selected elements color to white, and switches
+        all remaining to black"""
+        # for option in self.options:
+
+        # self.option[self.selection]
+
+
+    def text_format(self, message, text_font, text_size, text_color):
+        """Writes a text, the given message in the given font, size and color"""
+        new_font = pygame.font.Font(text_font, text_size)
+        new_text = new_font.render(message, 0, text_color)
+
+        return new_text
+
+
+
+
+
 def main_menu():
     """The main menu of the tetris game"""
+    menu = MainMenu()
+    title_font = FontObject('Arial', 90)
+    title_render = title_font.render_text('TETRIS', YELLOW)
+    menu_points = FontObject('Arial', 75)
+    rendered_menu_items = [menu_points.render_text(option, BLACK) for option in menu.options]
+    menu_y_offset = 50
+
     run = True
     while run:
-        WINDOW.fill(BLACK)
-        draw_text_middle('Press any key to begin', 60, WHITE, WINDOW)
-        pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
 
             if event.type == pygame.KEYDOWN:
-                main()
+                if event.key == pygame.K_UP and menu.selection > 0:
+                    menu.selection - 1
+                    rendered_menu_items[menu.selection] = menu_points.render_text(menu.options[menu.selection], WHTIE)
+
+                if event.key == pygame.K_DOWN and menu.selection < len(menu.options):
+                    menu.selection + 1
+
+        WINDOW.fill(BLUE)
+        WINDOW.blit(title_render, (
+            S_WIDTH / 2 - title_render.get_rect()[2]/2,
+            S_HEIGHT / 2 - title_render.get_rect()[2]/2))
+        for op in rendered_menu_items:
+            WINDOW.blit(op,
+                (S_WIDTH / 2 - op.get_rect()[2]/2,
+                S_HEIGHT / 2 - op.get_rect()[2]/2 + menu_y_offset * rendered_menu_items.index(op)
+                ))
+        pygame.display.update()
+
     pygame.quit()
+
+# Starting positions for the menu items
 
 
 WINDOW = pygame.display.set_mode((S_WIDTH, S_HEIGHT))

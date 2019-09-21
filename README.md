@@ -22,7 +22,7 @@ This is a python version of the famous tetris game amde for my father as a birth
 
 # To Do's
 - [X] Remove visible grid
-- [ ] Gray Border like in [this](https://classicreload.com/sites/default/files/tetris-for-windows.png) image.
+- [X] Gray Border like in [this](https://classicreload.com/sites/default/files/tetris-for-windows.png) image.
 - [X] Gray Inforbox to the left of the palying grid
 - [X] Show levels, next piece and score in the gray Box to the left of the Playinggrid
 - [ ] Background should match the levelimages from original "WinTETRIS"
@@ -36,6 +36,9 @@ This is a python version of the famous tetris game amde for my father as a birth
     - [ ] Level 8
     - [ ] Level 9
     - [ ] Level 10
+- [ ] Build a main menu:
+    - [ ] Select your starting-level
+    - [ ] After the game is finished, drop back to the main menu
 - [X] Find out how many points you get per dropoff of a piece and cleared rows per level
 
 
