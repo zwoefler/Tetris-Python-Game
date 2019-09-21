@@ -19,6 +19,10 @@ This is a python version of the famous tetris game amde for my father as a birth
     - [x] Z-Shape, green
     - [x] O-Shape, lightblue
     - [x] T-Shape, gray
+- [ ] Build Shortcuts
+    - [ ] F2 - new game
+    - [ ] F3 - pause the game
+        - [ ] F3 - pasuing shows a big text `PAUSE`
 
 # To Do's
 - [X] Remove visible grid
@@ -39,6 +43,12 @@ This is a python version of the famous tetris game amde for my father as a birth
 - [ ] Build a main menu:
     - [X] Selection, quit or start the game
     - [ ] Advance in the menu to a section where you can select your starting-level
+    - [ ] Build in back navigation
+    - [ ] Menupoint to change the keyboard settings
+        - [ ] Droping a piece
+        - [ ] Move piece left
+        - [ ] Move piece right
+        - [ ] Rotate piece
     - [ ] After the game is finished, drop back to the main menu
 - [X] Find out how many points you get per dropoff of a piece and cleared rows per level
 - [ ] Add some photos to the README.md, so people can see what the game looks like
