@@ -453,11 +453,9 @@ def main():
         fall_time += clock.get_rawtime()
         clock.tick(FPS)
 
-        # Falling piece code
-        if fall_speed > 0.25:
-            fall_speed -= 0.005
 
-        if fall_time/1000 >= fall_speed:
+        # Falling piece code
+        if fall_time/70 >= fall_speed:
             fall_time = 0
             current_piece.y_coordinate += 1
 
@@ -510,59 +508,26 @@ def main():
     pygame.time.delay(2000)
 
 
-def switcher_function(switches, argument):
-    """A function that functions as a switch-statement in other programming languages
-    in a given list"""
-    return
-
-
-
 class MainMenu():
     """A Class that holds some functions to make the main menu work,
     like positioning of text"""
-
-    def start_the_game(self):
-        """Function to start the game from the main menu"""
-        main()
-        return
-
-
-    def quit_the_game(self):
-        """Function to quit the game"""
-        pygame.quit()
-        quit()
-        return
-
 
     def determine_action(self):
         """Determines the action to be taken once a certain element of the options
         has been selected"""
         if self.options[self.selection] == 'start':
-            self.start_the_game()
+            main()
+        if self.options[self.selection] == 'settings':
+            print('Here should be some code')
         if self.option[self.selection] == 'quit':
-            self.quit_the_game()
-
-    def switch_options(self):
-        """This function changes the selected elements color to white, and switches
-        all remaining to black"""
-        # for option in self.options:
-        # self.option[self.selection]
-
-
-    def text_format(self, message, text_font, text_size, text_color):
-        """Writes a text, the given message in the given font, size and color"""
-        new_font = pygame.font.Font(text_font, text_size)
-        new_text = new_font.render(message, 0, text_color)
-        return new_text
+            pygame.quit()
+            quit()
 
 
     def __init__(self):
         self.selection = 0
-        self.options = ['start', 'quit']
+        self.options = ['start', 'settings', 'quit']
         # self.actions = [self.start_the_game(), self.quit_the_game()]
-
-
-
 
 
 def main_menu():
@@ -572,7 +537,7 @@ def main_menu():
     title_render = title_font.render_text('TETRIS', YELLOW)
     menu_points = FontObject('Arial', 75)
     rendered_menu_items = [menu_points.render_text(option, BLACK) for option in menu.options]
-    menu_y_offset = 50
+    menu_y_offset = 80
 
     run = True
     while run:
@@ -580,6 +545,7 @@ def main_menu():
             if event.type == pygame.QUIT:
                 run = False
 
+            # Navigating the main menu with the arrow keys
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP and menu.selection > 0:
                     # When keypress up, the color changes to white, all others to black
@@ -605,11 +571,12 @@ def main_menu():
             S_HEIGHT / 2 - title_render.get_rect()[2]/2))
 
         # Calculating the positions for the main menu
-        for op in rendered_menu_items:
-            WINDOW.blit(op,
-                (S_WIDTH / 2 - op.get_rect()[2]/2,
-                S_HEIGHT / 2 - op.get_rect()[2]/2 + menu_y_offset * rendered_menu_items.index(op)
-                ))
+        for menu_option in rendered_menu_items:
+            WINDOW.blit(
+                menu_option,
+                (S_WIDTH / 2 - menu_option.get_rect()[2]/2,
+                S_HEIGHT / 2 + menu_y_offset * rendered_menu_items.index(menu_option))
+                )
         pygame.display.update()
 
     pygame.quit()

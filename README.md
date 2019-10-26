@@ -52,6 +52,7 @@ This is a python version of the famous tetris game amde for my father as a birth
     - [ ] After the game is finished, drop back to the main menu
 - [X] Find out how many points you get per dropoff of a piece and cleared rows per level
 - [ ] Add some photos to the README.md, so people can see what the game looks like
+- [ ] Adopt the 30 FPS in the game, Change the clock settings
 
 
 # Scoring System
