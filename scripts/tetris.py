@@ -14,7 +14,7 @@ PLAY_WIDTH = 300            # 300 // 10 = 30 width per block
 PLAY_HEIGHT = 600           # 600 // 20 = 30 height per block
 BLOCK_SIZE = 30
 DESCRIPTION_FONT = pygame.font.SysFont('Arial', int(BLOCK_SIZE * 0.5))
-FPS=30
+FPS = 30
 
 # Preview Rectangle constants
 # Rectangle Positions
@@ -389,7 +389,7 @@ def draw_text_middle(text, size, color, surface):
 
 
 def get_random_piece():
-    """Gets a ranom shape piece"""
+    """Gets a random shape piece"""
     return Piece(5, 0, random.choice(SHAPES))
 
 
@@ -505,7 +505,6 @@ def main():
     # until jumping back to the main menu
     draw_text_middle("You lost the game", 20, WHITE, WINDOW)
     pygame.display.update()
-    pygame.time.delay(2000)
 
 
 class MainMenu():
@@ -518,10 +517,15 @@ class MainMenu():
         if self.options[self.selection] == 'start':
             main()
         if self.options[self.selection] == 'settings':
-            print('Here should be some code')
-        if self.option[self.selection] == 'quit':
+            print('Here should be the settings')
+        if self.options[self.selection] == 'quit':
             pygame.quit()
             quit()
+
+
+    def get_options(self):
+        """Returns the current options in the Main Menu"""
+        return self.options
 
 
     def __init__(self):
@@ -537,6 +541,7 @@ def main_menu():
     title_render = title_font.render_text('TETRIS', YELLOW)
     menu_points = FontObject('Arial', 75)
     rendered_menu_items = [menu_points.render_text(option, BLACK) for option in menu.options]
+    print("rendered_menu_items 0", rendered_menu_items[0])
     menu_y_offset = 80
 
     run = True
@@ -550,14 +555,18 @@ def main_menu():
                 if event.key == pygame.K_UP and menu.selection > 0:
                     # When keypress up, the color changes to white, all others to black
                     menu.selection -= 1
-                    rendered_menu_items = [menu_points.render_text(option, BLACK) for option in menu.options]
-                    rendered_menu_items[menu.selection] = menu_points.render_text(menu.options[menu.selection], WHITE)
+                    rendered_menu_items = [menu_points.render_text(
+                        option, BLACK) for option in menu.options]
+                    rendered_menu_items[menu.selection] = menu_points.render_text(
+                        menu.options[menu.selection], WHITE)
 
                 if event.key == pygame.K_DOWN and menu.selection < len(menu.options) - 1:
                     # Same as above, but opposite
                     menu.selection += 1
-                    rendered_menu_items = [menu_points.render_text(option, BLACK) for option in menu.options]
-                    rendered_menu_items[menu.selection] = menu_points.render_text(menu.options[menu.selection], WHITE)
+                    rendered_menu_items = [menu_points.render_text(
+                        option, BLACK) for option in menu.options]
+                    rendered_menu_items[menu.selection] = menu_points.render_text(
+                        menu.options[menu.selection], WHITE)
 
                 if event.key == pygame.K_RETURN:
                     menu.determine_action()
@@ -575,7 +584,8 @@ def main_menu():
             WINDOW.blit(
                 menu_option,
                 (S_WIDTH / 2 - menu_option.get_rect()[2]/2,
-                S_HEIGHT / 2 + menu_y_offset * rendered_menu_items.index(menu_option))
+                 S_HEIGHT / 2 +
+                 menu_y_offset * rendered_menu_items.index(menu_option))
                 )
         pygame.display.update()
 
