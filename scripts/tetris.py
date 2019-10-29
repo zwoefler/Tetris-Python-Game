@@ -412,9 +412,10 @@ def keyboard_interaction_while_playing(current_piece, grid):
         if event.type == pygame.KEYDOWN:
             #Key press left - move piece to the left
             if event.key == pygame.K_LEFT:
-                current_piece.x_coordinate -= 1
-                if not current_piece.valid_space(grid):
-                    current_piece.x_coordinate += 1
+                while current_piece.valid_space(grid):
+                    current_piece.x_coordinate -= 1
+                current_piece.x_coordinate += 1
+
             #Key press right - move piece to the right
             elif event.key == pygame.K_RIGHT:
                 current_piece.x_coordinate += 1
