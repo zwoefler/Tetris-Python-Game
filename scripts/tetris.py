@@ -14,14 +14,15 @@ PLAY_WIDTH = 300            # 300 // 10 = 30 width per block
 PLAY_HEIGHT = 600           # 600 // 20 = 30 height per block
 BLOCK_SIZE = 30
 DESCRIPTION_FONT = pygame.font.SysFont('Arial', int(BLOCK_SIZE * 0.5))
+FPS = 30
 
 # Preview Rectangle constants
 # Rectangle Positions
 X_POS_RECT = 0.1 * S_WIDTH
 Y_POS_RECT = 0.25 * S_HEIGHT
 # Rectangle dimensions
-RECT_WIDTH = PLAY_WIDTH * 0.3
-RECT_HEIGHT = RECT_WIDTH * 2
+PREVIEW_RECT_WIDTH = PLAY_WIDTH * 0.3
+PREVIEW_RECT_HEIGHT = PREVIEW_RECT_WIDTH * 2
 
 # Global GRID Variables
 ROWS = 20
@@ -34,7 +35,7 @@ TOP_LEFT_Y = S_HEIGHT - PLAY_HEIGHT     #100
 # PIECE-SHAPES as matrices
 S = [[0, 1, 1], [1, 1, 0]]
 Z = [[1, 1, 0], [0, 1, 1]]
-I = [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]]
+I = [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0]]
 O = [[1, 1], [1, 1]]
 J = [[0, 1, 0], [0, 1, 0], [1, 1, 0]]
 L = [[0, 1, 0], [0, 1, 0], [0, 1, 1]]
@@ -49,11 +50,13 @@ SHAPE_COLORS = [
     (0, 191, 255),
     (255, 20, 147),
     (255, 255, 0),
-    (190, 190, 190)]
+    (120, 120, 120)]
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
 GRAY_BORDER = (191, 191, 191)
+DARKER_GRAY = (145, 145, 145)
 TRANSPARENT_BLACK = (0, 0, 0, 0)
 BORDER_COLOR = GRAY_BORDER
 # index 0 - 6 represent shape
@@ -66,14 +69,17 @@ class Piece():
         self.y_coordinate = y_coordinate
         self.shape = shape
         self.color = SHAPE_COLORS[SHAPES.index(shape)]
-        self.rotation = 0
+        self.rotation = 1
         self.rotation_state = self.shape
 
 
     def rotate_piece(self):
-        """Rotates the piece clockwise once"""
+        """Rotates the piece counter-clockwise once"""
         if self.shape == O:
             return
+
+        if self.shape == I and self.rotation % 2 != 0:
+            self.rotation_state = I
 
         if self.shape == (S or Z):
             reversed_shape = list(reversed(self.rotation_state))
@@ -83,6 +89,8 @@ class Piece():
             counterclockwise_rotated_piece = [
                 list(i) for i in list(zip(*self.rotation_state))[::-1]]
             self.rotation_state = counterclockwise_rotated_piece
+
+        self.rotation += 1
 
         return
 
@@ -122,8 +130,8 @@ class Piece():
         """Draws the next shape in the given box"""
         start_x = x_pos
         start_y = y_pos
-        # piece_shape = self.shape
-        # shape_rotation = piece_shape[self.rotation % len(piece_shape)]
+
+        block_size = BLOCK_SIZE * 0.4
 
         for i, line in enumerate(self.rotation_state):
             row = list(line)
@@ -132,7 +140,7 @@ class Piece():
                     pygame.draw.rect(
                         window,
                         self.color,
-                        (start_x + j*10, start_y + i*10, 10, 10), 0)
+                        (start_x + j*block_size, start_y + i*block_size, block_size, block_size), 0)
 
 
 
@@ -213,23 +221,39 @@ def draw_window(surface, grid):
     pygame.draw.rect(surface, BORDER_COLOR, (TOP_LEFT_X, TOP_LEFT_Y, PLAY_WIDTH, PLAY_HEIGHT), 5)
 
 
+class FontObject():
+    """This class holds the font settings for a certain font"""
+    def __init__(self, font, size):
+        self.font = font
+        self.font_size = size
+        self.font_object = pygame.font.SysFont(self.font, self.font_size)
+
+
+    def set_size(self, new_font_size):
+        """Sets the size for the font object"""
+        self.font_size = new_font_size
+
+
+    def set_font(self, new_font):
+        """Sets the font for the font object"""
+        self.font = new_font
+
+
+    def render_text(self, message, text_color):
+        """This functions renders the given message in the given color, given as a triplet"""
+        return self.font_object.render(message, 0, text_color)
+
+
 def draw_score_preview(surface, score_instance, next_shape):
     """Draws the rectangle to preview the next piece, show the score and the current level"""
     # Font settings
-    score_font = DESCRIPTION_FONT.render("Score", 1, BLACK)
-    level_font = DESCRIPTION_FONT.render("Level", 1, BLACK)
-    lines_font = DESCRIPTION_FONT.render("Lines", 1, BLACK)
-    preview_font = DESCRIPTION_FONT.render("Next", 1, BLACK)
+    description_font_object = FontObject('Arial', int(BLOCK_SIZE * 0.5)).font_object
+    score_font = description_font_object.render("Score", 1, BLACK)
+    level_font = description_font_object.render("Level", 1, BLACK)
+    lines_font = description_font_object.render("Lines", 1, BLACK)
     current_score_font = DESCRIPTION_FONT.render(str(score_instance.score), 1, BLUE)
     current_level_font = DESCRIPTION_FONT.render(str(score_instance.level), 1, BLUE)
     current_lines_font = DESCRIPTION_FONT.render(str(score_instance.lines), 1, BLUE)
-
-    # Code for the Preview Rectangle
-    pygame.draw.rect(
-        surface,
-        GRAY_BORDER,
-        (X_POS_RECT, Y_POS_RECT, RECT_WIDTH, RECT_HEIGHT))
-
 
     # Print "Score" and dummy for the actual score
     surface.blit(score_font, (X_POS_RECT * 1.05, Y_POS_RECT * 1.05))
@@ -243,12 +267,94 @@ def draw_score_preview(surface, score_instance, next_shape):
     surface.blit(lines_font, (X_POS_RECT * 1.05, Y_POS_RECT * 1.45))
     surface.blit(current_lines_font, (X_POS_RECT * 1.15, Y_POS_RECT * 1.55))
 
-    # Print "Next" as indication for the next comming piece
-    f_width, _f_height = DESCRIPTION_FONT.size("Next")
-    surface.blit(preview_font, (X_POS_RECT + f_width, Y_POS_RECT * 1.65))
-    # Aligning the preview shape beneeth the "Next" text
-    next_shape.draw_next_shape(WINDOW, X_POS_RECT + f_width / 1.5, Y_POS_RECT * 1.75)
+    # Preview the next shape
+    next_shape.draw_next_shape(WINDOW,
+                               X_POS_RECT + PREVIEW_RECT_WIDTH * 0.3,
+                               Y_POS_RECT * 1.75)
 
+
+def draw_score_preview_frame(surface):
+    """Draws the preview frame with color and borders"""
+    # Code for the Preview Rectangle
+    pygame.draw.rect(
+        surface,
+        GRAY_BORDER,
+        (X_POS_RECT, Y_POS_RECT, PREVIEW_RECT_WIDTH, PREVIEW_RECT_HEIGHT))
+
+    # Border for the preview rectangle
+    pygame.draw.rect(
+        surface,
+        BLACK,
+        (X_POS_RECT, Y_POS_RECT, PREVIEW_RECT_WIDTH, PREVIEW_RECT_HEIGHT),
+        1
+    )
+
+    # Corner starting positions of Preview rectangle
+    start_x_top = X_POS_RECT - 2
+    start_y_top = Y_POS_RECT - 2
+    origin_pos = [start_x_top, start_y_top]
+
+    end_y_west = start_y_top + PREVIEW_RECT_HEIGHT
+    end_x_east = start_x_top + PREVIEW_RECT_WIDTH
+
+    y_end_pos = [start_x_top, end_y_west]
+    x_end_pos = [end_x_east, start_y_top]
+    x_y_end_pos = [end_x_east, end_y_west]
+
+    # Preview north-west-border white
+    pygame.draw.lines(
+        surface,
+        WHITE,
+        False,
+        [x_end_pos, origin_pos, y_end_pos],
+        2
+    )
+
+    # Preview south-east-border darker gray
+    pygame.draw.lines(
+        surface,
+        DARKER_GRAY,
+        False,
+        [x_end_pos, x_y_end_pos, y_end_pos],
+        2
+    )
+
+    # Preview inner south-east border white
+    # minus 2 from the border of the rectangle
+    pygame.draw.lines(
+        surface,
+        WHITE,
+        False,
+        [(start_x_top + 3, end_y_west -2),
+         (end_x_east -2, end_y_west -2),
+         (end_x_east -2, start_y_top + 3)]
+    )
+
+    # Positions for piece preview
+    origin_prev_x = X_POS_RECT * 1.10
+    origin_prev_y = Y_POS_RECT * 1.7
+
+    end_prev_x = origin_prev_x + 70
+    end_prev_y = origin_prev_y + 50
+    origin_prev_pos = (origin_prev_x, origin_prev_y)
+
+    # Draw preview rectangle border black
+    pygame.draw.lines(
+        surface,
+        BLACK,
+        False,
+        [(origin_prev_x, origin_prev_y + 50), origin_prev_pos, (origin_prev_x + 70, origin_prev_y)],
+        1
+    )
+
+    # Draw preview rectangle border white
+    pygame.draw.lines(
+        surface,
+        WHITE,
+        False,
+        [(origin_prev_x, end_prev_y), (end_prev_x, end_prev_y), (end_prev_x, origin_prev_y)],
+        1
+    )
 
 def clear_rows(grid, locked_positions):
     """Clears the rows, moves down the remaining ones on top and counts the score up"""
@@ -283,7 +389,7 @@ def draw_text_middle(text, size, color, surface):
 
 
 def get_random_piece():
-    """Gets a ranom shape piece"""
+    """Gets a random shape piece"""
     return Piece(5, 0, random.choice(SHAPES))
 
 
@@ -306,9 +412,10 @@ def keyboard_interaction_while_playing(current_piece, grid):
         if event.type == pygame.KEYDOWN:
             #Key press left - move piece to the left
             if event.key == pygame.K_LEFT:
-                current_piece.x_coordinate -= 1
-                if not current_piece.valid_space(grid):
-                    current_piece.x_coordinate += 1
+                while current_piece.valid_space(grid):
+                    current_piece.x_coordinate -= 1
+                current_piece.x_coordinate += 1
+
             #Key press right - move piece to the right
             elif event.key == pygame.K_RIGHT:
                 current_piece.x_coordinate += 1
@@ -327,8 +434,6 @@ def keyboard_interaction_while_playing(current_piece, grid):
                 while current_piece.valid_space(grid):
                     current_piece.y_coordinate += 1
                 current_piece.y_coordinate -= 1
-                return True
-    return False
 
 
 def main():
@@ -344,17 +449,14 @@ def main():
     fall_speed = 0.99
     game_score = Variables()
 
-
     while run:
         grid = create_grid(locked_positions)
         fall_time += clock.get_rawtime()
-        clock.tick()
+        clock.tick(FPS)
+
 
         # Falling piece code
-        if fall_speed > 0.25:
-            fall_speed -= 0.005
-
-        if fall_time/1000 >= fall_speed:
+        if fall_time/70 >= fall_speed:
             fall_time = 0
             current_piece.y_coordinate += 1
 
@@ -364,7 +466,7 @@ def main():
                 change_piece = True
 
         # Navigation with the keyboard
-        change_piece = keyboard_interaction_while_playing(current_piece, grid)
+        keyboard_interaction_while_playing(current_piece, grid)
 
         shape_position = current_piece.transform_shape_into_grid_positions()
 
@@ -391,6 +493,7 @@ def main():
 
          # Draw the window
         draw_window(WINDOW, grid)
+        draw_score_preview_frame(WINDOW)
         draw_score_preview(WINDOW, game_score, next_piece)
         pygame.display.update()
 
@@ -403,23 +506,93 @@ def main():
     # until jumping back to the main menu
     draw_text_middle("You lost the game", 20, WHITE, WINDOW)
     pygame.display.update()
-    pygame.time.delay(2000)
+
+
+class MainMenu():
+    """A Class that holds some functions to make the main menu work,
+    like positioning of text"""
+
+    def determine_action(self):
+        """Determines the action to be taken once a certain element of the options
+        has been selected"""
+        if self.options[self.selection] == 'start':
+            main()
+        if self.options[self.selection] == 'settings':
+            print('Here should be the settings')
+        if self.options[self.selection] == 'quit':
+            pygame.quit()
+            quit()
+
+
+    def get_options(self):
+        """Returns the current options in the Main Menu"""
+        return self.options
+
+
+    def __init__(self):
+        self.selection = 0
+        self.options = ['start', 'settings', 'quit']
+        # self.actions = [self.start_the_game(), self.quit_the_game()]
 
 
 def main_menu():
     """The main menu of the tetris game"""
+    menu = MainMenu()
+    title_font = FontObject('Arial', 90)
+    title_render = title_font.render_text('TETRIS', YELLOW)
+    menu_points = FontObject('Arial', 75)
+    rendered_menu_items = [menu_points.render_text(option, BLACK) for option in menu.options]
+    print("rendered_menu_items 0", rendered_menu_items[0])
+    menu_y_offset = 80
+
     run = True
     while run:
-        WINDOW.fill(BLACK)
-        draw_text_middle('Press any key to begin', 60, WHITE, WINDOW)
-        pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
 
+            # Navigating the main menu with the arrow keys
             if event.type == pygame.KEYDOWN:
-                main()
+                if event.key == pygame.K_UP and menu.selection > 0:
+                    # When keypress up, the color changes to white, all others to black
+                    menu.selection -= 1
+                    rendered_menu_items = [menu_points.render_text(
+                        option, BLACK) for option in menu.options]
+                    rendered_menu_items[menu.selection] = menu_points.render_text(
+                        menu.options[menu.selection], WHITE)
+
+                if event.key == pygame.K_DOWN and menu.selection < len(menu.options) - 1:
+                    # Same as above, but opposite
+                    menu.selection += 1
+                    rendered_menu_items = [menu_points.render_text(
+                        option, BLACK) for option in menu.options]
+                    rendered_menu_items[menu.selection] = menu_points.render_text(
+                        menu.options[menu.selection], WHITE)
+
+                if event.key == pygame.K_RETURN:
+                    menu.determine_action()
+                    # Get the current selection and apply the corresponding method
+                    # e.g. start the game, start the main function; or quit the game
+
+
+        WINDOW.fill(BLUE)
+        WINDOW.blit(title_render, (
+            S_WIDTH / 2 - title_render.get_rect()[2]/2,
+            S_HEIGHT / 2 - title_render.get_rect()[2]/2))
+
+        # Calculating the positions for the main menu
+        for menu_option in rendered_menu_items:
+            WINDOW.blit(
+                menu_option,
+                (S_WIDTH / 2 - menu_option.get_rect()[2]/2,
+                 S_HEIGHT / 2 +
+                 menu_y_offset * rendered_menu_items.index(menu_option))
+                )
+        pygame.display.update()
+
     pygame.quit()
+
+# Starting positions for the menu items
 
 
 WINDOW = pygame.display.set_mode((S_WIDTH, S_HEIGHT))
