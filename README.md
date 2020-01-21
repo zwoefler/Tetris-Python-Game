@@ -6,7 +6,7 @@ This is a python version of the famous tetris game amde for my father as a birth
 
 # Features to implement
 - [ ] Implement the scoringsystem of the original Tetris (MS Entertainment Pack for Windows)
-    - [X] Piecedrop gives ceratin amount of points
+    - [X] Piecedrop gives certain amount of points
     - [ ] More actions, turning and moving a piece, the less additional points
 - [X] Preview the next piece
 - [X] Clear Rows once they are complete
@@ -30,16 +30,6 @@ This is a python version of the famous tetris game amde for my father as a birth
 - [X] Gray Inforbox to the left of the palying grid
 - [X] Show levels, next piece and score in the gray Box to the left of the Playinggrid
 - [ ] Background should match the levelimages from original "WinTETRIS"
-    - [ ] Level 1
-    - [ ] Level 2
-    - [ ] Level 3
-    - [ ] Level 4
-    - [ ] Level 5
-    - [ ] Level 6
-    - [ ] Level 7
-    - [ ] Level 8
-    - [ ] Level 9
-    - [ ] Level 10
 - [ ] Build a main menu:
     - [X] Selection, quit or start the game
     - [ ] Advance in the menu to a section where you can select your starting-level
@@ -76,7 +66,7 @@ Bonuses for clearing rows:
 
 
 
-# Known Issues
+# Known Issues aka Features ;)
 - [X] Rows are not cleared
 Wrote a function that clears rows
 
@@ -98,7 +88,6 @@ Returns now true for `change_piece` immediatly after dropping the piece. Reduces
     - Avoid using global variables
 
 
+# Acknowledgment
 
 Inspired by the original "WinTETRIS" for Windows98 and the code of [Tetris-Game](https://github.com/techwithtim/Tetris-Game) from [TechwithTim](https://github.com/techwithtim).
-
-
